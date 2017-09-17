@@ -67,7 +67,7 @@ setup(
     author=p_author,
     author_email=p_email,
     url=p_url,
-    description=p_name + " APIs",
+    description="Python asynchronous TCP server and client",
 
     # Version, format : Major.Minor.Revision
     version=p_version,
