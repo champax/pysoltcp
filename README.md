@@ -1,11 +1,11 @@
-pysol_tcp
+pysoltcp
 ============
 
 Welcome to pysol
 
 Copyright (C) 2013/2017 Laurent Labatut / Laurent Champagnac
 
-pysol_tcp is a set of python asynchronous TCP server and client.
+pysoltcp is a set of python asynchronous TCP server and client.
 
 It is gevent (co-routines) based.
 
@@ -23,7 +23,7 @@ It supports:
 - Server forking
 - Server context factory for server side protocol handling
 - Client derivation with _on_receive override for client side protocol handling
-- Intrumented via Meters (pysol_meters)
+- Intrumented via Meters (pysolmeters)
 
 Please note that, by design, synchronous TCP sockets are not supported.
 
@@ -36,11 +36,11 @@ Usage
 A simple client/server ping-pong text protocol (\n delimited) is implemented for unittests.
 
 For client side, refer to:
-- pysol_tcp_test.TcpApi.PingProtocol.Client.PingSimpleClient.PingSimpleClient
+- pysoltcp_test.TcpApi.PingProtocol.Client.PingSimpleClient.PingSimpleClient
 
 For server side, refer to:
-- pysol_tcp_test.TcpApi.PingProtocol.Server.PingServerContextFactory.PingServerContextFactory
-- pysol_tcp_test.TcpApi.PingProtocol.Server.PingServerContext.PingServerContext
+- pysoltcp_test.TcpApi.PingProtocol.Server.PingServerContextFactory.PingServerContextFactory
+- pysoltcp_test.TcpApi.PingProtocol.Server.PingServerContext.PingServerContext
 
 Implementations are pretty verbose due to infrastructure in place for unit testing.
 
@@ -67,7 +67,7 @@ Unittests
 
 To run unittests, you will need:
 
-- SOCKS5 proxy installed and ready (you may use Dante)
+- SOCKS5 proxy installed and ready (you may use Dante), using port 127.0.0.1:1080, no credentials.
 - TCP Listen port 3201 available
 - Advanced unittests (disabled by default) requires tuned OS and TCP stack 
 

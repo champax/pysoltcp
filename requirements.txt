@@ -3,8 +3,8 @@ greenlet
 gevent
 
 # pysol
-pysol_base
-pysol_meters
+pysolbase
+pysolmeters
 
 # Socks
 PySocks
