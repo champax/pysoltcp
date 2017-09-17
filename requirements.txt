@@ -1,0 +1,11 @@
+# gevent stack
+greenlet
+gevent
+
+# pysol
+pysol_base
+pysol_meters
+
+# Socks
+PySocks
+
