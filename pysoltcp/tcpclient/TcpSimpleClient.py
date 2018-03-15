@@ -28,7 +28,16 @@ from threading import Lock
 import gevent
 import socks
 from gevent import GreenletExit
-from gevent._sslgte279 import SSLSocket
+
+from pysoltcp import PY2
+
+if PY2:
+    # noinspection PyProtectedMember
+    from gevent._sslgte279 import SSLSocket
+else:
+    # noinspection PyProtectedMember
+    from gevent._ssl3 import SSLSocket
+
 from gevent.queue import Queue
 from pysolbase.SolBase import SolBase
 from pysolmeters.AtomicInt import AtomicIntSafe
@@ -53,7 +62,7 @@ class TcpSimpleClient(TcpSocketManager):
         Option via TcpClientConfig to enable SSL on socket.
         In this case, SSL handshake is to be done manually AFTER connect. Higher level implementation MUST handle this.
         :param tcp_client_config: The tcp client config.
-        :return Nothing.
+        :type tcp_client_config: pysoltcp.tcpclient.TcpClientConfig.TcpClientConfig
         """
 
         # Base - we provide two callback :
@@ -104,6 +113,9 @@ class TcpSimpleClient(TcpSocketManager):
         self.on_disconnect_notifypoolcallbackcall = True
         self.on_disconnect_notifypoolcallback = None
 
+        # Ssl
+        self.ssl_handshake_timeout_ms = 5000
+
     # ================================
     # POOL METHOD
     # ================================
@@ -130,7 +142,7 @@ class TcpSimpleClient(TcpSocketManager):
         """
         To string override
         :return: A string
-        :rtype string
+        :rtype str
         """
 
         return "c.addr={0}:{1}/{2}:{3}*cc={4}*dc={5}*c.q.recv.size={6}*sock={7}*proxy={8}/{9}:{10}*{11}".format(
@@ -153,6 +165,7 @@ class TcpSimpleClient(TcpSocketManager):
         Connect to server. Return true upon success.
         If SSL is enable, do NOT forget at higher level to initiate a SSL handshake manually.
         :return True if connected, false otherwise.
+        :rtype bool
         """
 
         try:
@@ -163,7 +176,7 @@ class TcpSimpleClient(TcpSocketManager):
 
             # Check
             if self.is_connected:
-                logger.warn("TcpSimpleClient : connect : already connected, doing nothing, self=%s", self)
+                logger.warning("TcpSimpleClient : connect : already connected, doing nothing, self=%s", self)
                 return False
 
             # Init
@@ -320,26 +333,26 @@ class TcpSimpleClient(TcpSocketManager):
 
                 # Go
                 self.current_socket.setsockopt(SOL_SOCKET, SO_KEEPALIVE, 1)
-                self.current_socket.setsockopt(SOL_TCP, TCP_KEEPIDLE, self._tcp_client_config.tcp_keepalive_probes_senddelayms / 1000)
-                self.current_socket.setsockopt(SOL_TCP, TCP_KEEPINTVL, self._tcp_client_config.tcp_keepalive_probes_sendintervalms / 1000)
-                self.current_socket.setsockopt(SOL_TCP, TCP_KEEPCNT, self._tcp_client_config.tcp_keepalive_probes_failedcount)
+                self.current_socket.setsockopt(SOL_TCP, TCP_KEEPIDLE, int(self._tcp_client_config.tcp_keepalive_probes_senddelayms / 1000))
+                self.current_socket.setsockopt(SOL_TCP, TCP_KEEPINTVL, int(self._tcp_client_config.tcp_keepalive_probes_sendintervalms / 1000))
+                self.current_socket.setsockopt(SOL_TCP, TCP_KEEPCNT, int(self._tcp_client_config.tcp_keepalive_probes_failedcount))
 
                 # Check
                 v = self.current_socket.getsockopt(SOL_SOCKET, SO_KEEPALIVE)
                 if v != 1:
-                    logger.warn("SO_KEEPALIVE mismatch, having=%s, required=1", v)
+                    logger.warning("SO_KEEPALIVE mismatch, having=%s, required=1", v)
 
                 v = self.current_socket.getsockopt(SOL_TCP, TCP_KEEPIDLE)
                 if v != self._tcp_client_config.tcp_keepalive_probes_senddelayms / 1000:
-                    logger.warn("TCP_KEEPIDLE mismatch, having=%s, required=%s", v, self._tcp_client_config.tcp_keepalive_probes_senddelayms / 1000)
+                    logger.warning("TCP_KEEPIDLE mismatch, having=%s, required=%s", v, self._tcp_client_config.tcp_keepalive_probes_senddelayms / 1000)
 
                 v = self.current_socket.getsockopt(SOL_TCP, TCP_KEEPINTVL)
                 if v != self._tcp_client_config.tcp_keepalive_probes_sendintervalms / 1000:
-                    logger.warn("TCP_KEEPINTVL mismatch, having=%s, required=%s", v, self._tcp_client_config.tcp_keepalive_probes_sendintervalms / 1000)
+                    logger.warning("TCP_KEEPINTVL mismatch, having=%s, required=%s", v, self._tcp_client_config.tcp_keepalive_probes_sendintervalms / 1000)
 
                 v = self.current_socket.getsockopt(SOL_TCP, TCP_KEEPCNT)
                 if v != self._tcp_client_config.tcp_keepalive_probes_failedcount:
-                    logger.warn("TCP_KEEPCNT mismatch, having=%s, required=%s", v, self._tcp_client_config.tcp_keepalive_probes_failedcount)
+                    logger.warning("TCP_KEEPCNT mismatch, having=%s, required=%s", v, self._tcp_client_config.tcp_keepalive_probes_failedcount)
 
             # Non-blocking mode
             self.current_socket.setblocking(0)
@@ -373,6 +386,7 @@ class TcpSimpleClient(TcpSocketManager):
         """
         Disconnect from server. Return true upon success.
         :return True if success, false otherwise.
+        :rtype bool
         """
         try:
             logger.debug("TcpSimpleClient : disconnect : entering, self=%s", self)
@@ -430,7 +444,7 @@ class TcpSimpleClient(TcpSocketManager):
                     # DO NOT MOVE THIS SLEEP, REDIS WILL DEADLOCK ON START
                     SolBase.sleep(0)
                 except Exception as e:
-                    logger.warn("on_disconnect_notifypoolcallback : call exception=%s", SolBase.extostr(e))
+                    logger.warning("on_disconnect_notifypoolcallback : call exception=%s", SolBase.extostr(e))
 
             # Greenlet reset after is_connected=False (will help to exit itself)
             if self._read_greenlet:
@@ -461,26 +475,30 @@ class TcpSimpleClient(TcpSocketManager):
     def __do_ssl_handshake(self):
         """
         Do a ssl handshake. Method is using a greenlet, but is blocking for the caller.
-        :return: Nothing.
         """
 
         # Go
         SolBase.sleep(0)
-        ssl_greenlet = gevent.spawn(self.__do_ssl_handshake_internal)
-
-        # Wait for complete
-        SolBase.sleep(0)
-        ssl_greenlet.join()
+        try:
+            logger.debug("Calling do_handshake now, ssl_handshake_timeout_ms=%s", self.ssl_handshake_timeout_ms)
+            with gevent.Timeout(seconds=self.ssl_handshake_timeout_ms / 1000.0, exception=Exception):
+                SolBase.sleep(0)
+                self.current_socket.do_handshake()
+                logger.debug("Called do_handshake")
+        except Exception as e:
+            logger.warn("Exception while waiting for do_handshake, ex=%s", SolBase.extostr(e))
+            self._callback_disconnect()
+        finally:
+            SolBase.sleep(0)
 
     def __do_ssl_handshake_internal(self):
         """
         Do a ssl handshake. Call _callback_disconnect() if error.
-        :return: Nothing
         """
         try:
             logger.debug("__do_ssl_handshake_internal : start now, self=%s", self)
             SolBase.sleep(0)
-            self.current_socket.do_handshake()
+
         except Exception as e:
             logger.error("__do_ssl_handshake_internal : exception=%s, self=%s", SolBase.extostr(e), self)
             self._callback_disconnect()
@@ -500,30 +518,31 @@ class TcpSimpleClient(TcpSocketManager):
         - IN ALL CASES THIS METHOD RECEIVE A BINARY BUFFER
 
         !! CAUTION !!
-        - PYTHON 2.X / binary - str    => str is a byte array (or an ascii string) : nothing to do
-        - PYTHON 2.X / text - unicode  => you receive a str, you may convert it to unicode (SolBase.binary_to_unicode)
+        - PYTHON 2.X / binary - bytes    => bytes is a byte array (or an ascii string) : nothing to do
+        - PYTHON 2.X / text - str  => you receive a bytes, you may convert it to str (SolBase.binary_to_unicode)
 
         !! CAUTION !!
-        - PYTHON 3.X / binary - bytes  => bytes is binary. You may convert it to a str using encoding.
+        - PYTHON 3.X / binary - bytes  => bytes is binary. You may convert it to a bytes using encoding.
 
                 |  2.x                     |  3.x
         --------+--------------------------+-----------------------
-        Bytes   |  'abc' <type 'str'>      |  b'abc' <type 'bytes'>
-        Unicode | u'abc' <type 'unicode'>  |   'abc' <type 'str'>
+        Bytes   |  'abc' <type 'bytes'>      |  b'abc' <type 'bytes'>
+        Unicode | u'abc' <type 'str'>  |   'abc' <type 'bytes'>
         :param binary_buffer: Binary buffer received.
-        :return: Nothing.
+        :type binary_buffer: bytes
         """
 
         # Received something...
         logger.debug("TcpSimpleClient : _on_receive : binary_buffer=%s, self=%s", repr(binary_buffer), self)
 
         # Parse
-        self._receive_current_buf = ProtocolParserTextDelimited.parse_protocol(self._receive_current_buf, binary_buffer, self._receive_queue, "\n")
+        self._receive_current_buf = ProtocolParserTextDelimited.parse_protocol(self._receive_current_buf, binary_buffer, self._receive_queue, b"\n")
 
     def get_recv_queue_len(self):
         """
         Get receive queue len
         :return The receive queue length.
+        :rtype int
         """
         return self._receive_queue.qsize()
 
@@ -538,7 +557,9 @@ class TcpSimpleClient(TcpSocketManager):
         - If block is True AND timeOut=None, will wait forever for an item.
         - If block is True and timeout_sec>0, will wait for timeout_sec then raise Empty exception if no item.
         :param block: If true, will block.
+        :type block: bool
         :param timeout_sec: The timeout in second.
+        :type timeout_sec: None,int
         """
 
         return self._receive_queue.get(block, timeout_sec)

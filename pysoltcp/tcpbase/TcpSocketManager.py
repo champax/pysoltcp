@@ -20,18 +20,20 @@
 # ===============================================================================
 """
 import logging
-from Queue import Empty
 from errno import EWOULDBLOCK
 from socket import error
 from threading import Lock
 
 import gevent
 from gevent import GreenletExit
+# noinspection PyProtectedMember
 from gevent._socketcommon import wait_read, wait_write
-from gevent.queue import Queue
+# noinspection PyProtectedMember
+from gevent.queue import Queue, Empty
 from pysolbase.SolBase import SolBase
 from pysolmeters.Meters import Meters
 
+from pysoltcp import string_types, binary_type
 from pysoltcp.tcpbase.SignaledBuffer import SignaledBuffer
 
 SolBase.voodoo_init()
@@ -57,9 +59,8 @@ class TcpSocketManager(object):
     def safe_close_socket(cls, soc_to_close):
         """
         Safe close a socket
-        :param cls: cls
         :param soc_to_close: socket
-        :return: Nothing
+        :type soc_to_close: socket.socket
         """
 
         if soc_to_close is None:
@@ -84,8 +85,9 @@ class TcpSocketManager(object):
         """
         Constructor.
         :param callback_disconnect: Callback to call upon socket disconnection.
+        :type callback_disconnect: Callable
         :param callback_receive:  Callback to call upon socket receive.
-        :return: Nothing.
+        :type callback_receive: Callable
         """
 
         # Connected flag (backed by is_connected property)
@@ -130,7 +132,7 @@ class TcpSocketManager(object):
         """
         To string override
         :return: A string
-        :rtype string
+        :rtype str
         """
 
         to = None
@@ -152,7 +154,7 @@ class TcpSocketManager(object):
         """
         Set the receive callback
         :param callback_receive: Callback
-        :return: Nothing
+        :type callback_receive: Callable
         """
 
         self._callback_receive = callback_receive
@@ -164,7 +166,6 @@ class TcpSocketManager(object):
     def __shedule_ssl_handshake_timeout(self):
         """
         Shedule a ssl handshake timeout
-        :return: Nothing
         """
 
         with self.__ssl_locker:
@@ -174,7 +175,6 @@ class TcpSocketManager(object):
     def _unschedule_ssl_handshake_timeout(self):
         """
         Unschedule the ssl timeout
-        :return: Nothing
         """
         with self.__ssl_locker:
             logger.debug("_unschedule_ssl_handshake_timeout, self=%s", self)
@@ -186,7 +186,6 @@ class TcpSocketManager(object):
     def __on_ssl_timeout(self):
         """
         Called when SSL timeout.
-        :return: Nothing
         """
 
         # Reset first (in LOCK)
@@ -205,7 +204,7 @@ class TcpSocketManager(object):
             return
 
         # Not done, FATAL
-        logger.warn("handshake timeout, fatal, ms=%s, self=%s", self.__ssl_handshake_timeout_ms, self)
+        logger.warning("handshake timeout, fatal, ms=%s, self=%s", self.__ssl_handshake_timeout_ms, self)
 
         # Stat
         Meters.aii("tcp.server.ssl_handshake_timeout_count")
@@ -220,10 +219,12 @@ class TcpSocketManager(object):
     def set_ssl_handshake_asynch(self, ssl_handshake_asynch_enable, ssl_handshake_timeout_ms, ssl_wait_debug_ms=None):
         """
         Enable or disable ssl asynch handshake.
-        :param ssl_handshake_asynch_enable: Boolean. If True, will enable it.
+        :param ssl_handshake_asynch_enable: If True, will enable it.
+        :type ssl_handshake_asynch_enable: bool
         :param ssl_handshake_timeout_ms: Apply if asynch handshake is enable. Timeout in ms for handshake itself.
+        :type ssl_handshake_timeout_ms: int
         :param ssl_wait_debug_ms: Debug only.
-        :return: Nothing.
+        :type ssl_wait_debug_ms: int,None
         """
 
         self.__ssl_handshake_asynch = ssl_handshake_asynch_enable
@@ -242,7 +243,7 @@ class TcpSocketManager(object):
         """
         Set the time taken to perform the ssl handshake.
         :param ms: Millis.
-        :return: Nothing
+        :type ms: int        
         """
         self.__ssl_handshake_ms = ms
 
@@ -250,6 +251,7 @@ class TcpSocketManager(object):
         """
         Setter
         :param my_soc: The socket.
+        :type my_soc: socket.socket
         """
         self._socket = my_soc
 
@@ -257,7 +259,7 @@ class TcpSocketManager(object):
         """
         Setter
         :param b: New value.
-        :return Nothing.
+        :type b: bool
         """
         self.__isConnected = b
 
@@ -265,6 +267,7 @@ class TcpSocketManager(object):
         """
         Return the ssl handshake elapsed ms.
         :return: Integer or None if not set.
+        :rtype int,None
         """
         return self.__ssl_handshake_ms
 
@@ -272,6 +275,7 @@ class TcpSocketManager(object):
         """
         Getter.
         :return: The current socket.
+        :rtype socket.socket
         """
         return self._socket
 
@@ -287,6 +291,7 @@ class TcpSocketManager(object):
         """
         Getter.
         :return: The gevent send queue.
+        :rtype gevent.queue.Queue
         """
         return self.__send_queue
 
@@ -294,6 +299,7 @@ class TcpSocketManager(object):
         """
         Getter.
         :return: A datetime.
+        :rtype datetime
         """
         return self._dt_created
 
@@ -301,6 +307,7 @@ class TcpSocketManager(object):
         """
         Getter.
         :return: A datetime.
+        :rtype datetime
         """
         return self._dt_last_send
 
@@ -308,6 +315,7 @@ class TcpSocketManager(object):
         """
         Getter.
         :return: A datetime.
+        :rtype datetime
         """
         return self._dt_last_recv
 
@@ -332,12 +340,14 @@ class TcpSocketManager(object):
     def send_binary_to_socket(self, buffer_to_send):
         """
         Send to socket, asynch.
-        :param buffer_to_send: The localBuffer to send (a str or bytes)
+        :param buffer_to_send: The localBuffer to send (bytes)
+        :type buffer_to_send: bytes
         :return: True is send has been scheduled, false otherwise.
+        :rtype bool
         """
 
         # Check
-        if not isinstance(buffer_to_send, str):
+        if not isinstance(buffer_to_send, binary_type):
             logger.error("buffer_to_send not a binary, class=%s, self=%s", SolBase.get_classname(buffer_to_send), self)
             return False
 
@@ -360,8 +370,9 @@ class TcpSocketManager(object):
         Upon completion, signaled_buffer.send_event is set.
         Caution : Caller MUST check the boolean returned. If False, the event will NOT be set.
         :param signaled_buffer: A signaled_buffer instance.
-        :type signaled_buffer: SignaledBuffer
+        :type signaled_buffer: pysoltcp.tcpbase.SignaledBuffer.SignaledBuffer
         :return: True is send has been scheduled, false otherwise.
+        :rtype bool
         """
 
         # Check
@@ -370,7 +381,7 @@ class TcpSocketManager(object):
             return False
 
             # Check
-        if not isinstance(signaled_buffer.binary_buffer, str):
+        if not isinstance(signaled_buffer.binary_buffer, binary_type):
             logger.error("binary_buffer not a binary, class=%s, self=%s", SolBase.get_classname(signaled_buffer.binary_buffer), self)
             return False
 
@@ -393,33 +404,30 @@ class TcpSocketManager(object):
         """
         Send text to socket, asynch.
         :param text_to_send: The text to send (str)
+        :type text_to_send: str
         :param append_lf: If true, append an \n
         :return: True is send has been scheduled, false otherwise.
         """
 
-        # Check
-        if not isinstance(text_to_send, str):
-            logger.error("text_to_send not an str, class=%s, buf=%s, self=%s", SolBase.get_classname(text_to_send), repr(text_to_send), self)
-            return False
-
-        # Enqueue
-        if append_lf:
-            return self.send_binary_to_socket(text_to_send + "\n")
-        else:
-            return self.send_binary_to_socket(text_to_send)
+        # DEPRECATED, use send_unicode_to_socket
+        return self.send_unicode_to_socket(text_to_send, append_lf=append_lf)
 
     def send_unicode_to_socket(self, unicode_to_send, encoding="utf-8", append_lf=True):
         """
         Send text to socket, asynch.
-        :param unicode_to_send: The text to send (unicode)
+        :param unicode_to_send: The text to send (str)
+        :type unicode_to_send: str
         :param encoding: The encoding to use.
+        :type encoding: str
         :param append_lf: If true, append an \n
+        :type append_lf: bool
         :return: True is send has been scheduled, false otherwise.
+        :rtype: bool
         """
 
         # Check
-        if not isinstance(unicode_to_send, unicode):
-            logger.error("unicode_to_send not an unicode, class=%s, unicode=%s, self=%s", SolBase.get_classname(unicode_to_send), repr(unicode_to_send), self)
+        if not isinstance(unicode_to_send, string_types):
+            logger.error("unicode_to_send not an string_types, class=%s, str=%s, self=%s", SolBase.get_classname(unicode_to_send), repr(unicode_to_send), self)
             return False
 
         # Go
@@ -439,6 +447,7 @@ class TcpSocketManager(object):
         """
         Return the send queue len.
         :return The queue length (integer)
+        :rtype int
         """
         return self.__send_queue.qsize()
 
@@ -480,6 +489,7 @@ class TcpSocketManager(object):
         """
         Return true if we are connected and we do not have a fatal error
         :return: bool
+        :rtype bool
         """
 
         return self.is_connected and not self.__internal_fatal_error
@@ -492,6 +502,7 @@ class TcpSocketManager(object):
         """
         Wait for socket available for read (recv).
         :return Return True if available, False otherwise.
+        :rtype bool
         """
 
         # Check
@@ -507,14 +518,14 @@ class TcpSocketManager(object):
             # Ready
             return True
         except Exception as e:
-            logger.warn("Exception, ex=%s, self=%s", SolBase.extostr(e),
-                        self)
+            logger.warning("Exception, ex=%s, self=%s", SolBase.extostr(e), self)
             return False
 
     def _wait_for_socket_send(self):
         """
         Wait for socket available for write (send).
         :return Return True if available, False otherwise.
+        :rtype bool
         """
 
         # Check
@@ -530,8 +541,7 @@ class TcpSocketManager(object):
             # Ready
             return True
         except Exception as e:
-            logger.warn("Exception, ex=%s, self=%s", SolBase.extostr(e),
-                        self)
+            logger.warning("Exception, ex=%s, self=%s", SolBase.extostr(e), self)
             return False
 
     # ================================
@@ -574,9 +584,9 @@ class TcpSocketManager(object):
 
                         # Debug ONLY
                         if self.__ssl_wait_debug_ms:
-                            logger.warn("DEBUG : forcing a wait for SSL handshake timeout, ms=%s, self=%s", self.__ssl_wait_debug_ms, self)
+                            logger.warning("DEBUG : forcing a wait for SSL handshake timeout, ms=%s, self=%s", self.__ssl_wait_debug_ms, self)
                             SolBase.sleep(self.__ssl_wait_debug_ms)
-                            logger.warn("DEBUG : forcing a wait for SSL handshake timeout, done, self=%s", self)
+                            logger.warning("DEBUG : forcing a wait for SSL handshake timeout, done, self=%s", self)
 
                         # Do the handshake
                         self.current_socket.do_handshake()
@@ -607,7 +617,7 @@ class TcpSocketManager(object):
                     ok = self._wait_for_socket_recv()
                     if not ok:
                         # This is not really normal
-                        logger.warn("_wait_for_socket_recv returned False, self=%s", self)
+                        logger.warning("_wait_for_socket_recv returned False, self=%s", self)
                     elif not self.__is_running():
                         logger.debug("_wait_for_socket_recv returned True, __is_running()==False, exiting, self=%s", self)
                         return
@@ -637,7 +647,7 @@ class TcpSocketManager(object):
                     # Next read
                     SolBase.sleep(0)
                 except Exception as e:
-                    logger.warn("IN_LOOP Exception raised, ex=%s, self=%s", SolBase.extostr(e), self)
+                    logger.warning("IN_LOOP Exception raised, ex=%s, self=%s", SolBase.extostr(e), self)
         except Exception as e:
             logger.error("METHOD Exception raised, ex=%s, self=%s", SolBase.extostr(e), self)
         finally:
@@ -731,7 +741,7 @@ class TcpSocketManager(object):
                         continue
 
                     # Go some
-                    if isinstance(item, str):
+                    if isinstance(item, binary_type):
                         # Length
                         length = len(item)
                         # Buffer to send
@@ -746,9 +756,7 @@ class TcpSocketManager(object):
                         # Event to signal
                         event_to_signal = item.send_event
                     else:
-                        logger.warn(
-                            "not managed class in queue, class=%s, item=%s",
-                            SolBase.get_classname(item), item)
+                        logger.warning("not managed class in queue, class=%s, item=%s", SolBase.get_classname(item), item)
                         continue
 
                     # Stat now
@@ -760,7 +768,7 @@ class TcpSocketManager(object):
                     if not ok:
                         # This is not really normal
                         if self.__is_running():
-                            logger.warn("_wait_for_socket_send returned False (running true), self=%s", self)
+                            logger.warning("_wait_for_socket_send returned False (running true), self=%s", self)
                         else:
                             logger.info("_wait_for_socket_send returned False (running false), self=%s", self)
                     elif not self.__is_running():
@@ -774,9 +782,9 @@ class TcpSocketManager(object):
                             if not ok:
                                 if self.__is_running():
                                     # This is not really normal
-                                    logger.warn("_write_to_socket returned False (running true), self=%s", self)
+                                    logger.warning("_write_to_socket returned False (running true), self=%s", self)
                                 else:
-                                    logger.warn("_write_to_socket returned False (running false), self=%s", self)
+                                    logger.warning("_write_to_socket returned False (running false), self=%s", self)
 
                             # Signal if applicable
                             if event_to_signal:
@@ -791,7 +799,7 @@ class TcpSocketManager(object):
                     # Next read
                     SolBase.sleep(0)
                 except Exception as e:
-                    logger.warn("IN_LOOP Exception raised, ex=%s, self=%s", SolBase.extostr(e), self)
+                    logger.warning("IN_LOOP Exception raised, ex=%s, self=%s", SolBase.extostr(e), self)
         except Exception as e:
             logger.error("METHOD Exception raised, ex=%s, self=%s", SolBase.extostr(e), self)
         finally:

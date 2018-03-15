@@ -39,7 +39,7 @@ class SignaledBuffer(object):
         """
         Set the binary local_buffer.
         :param local_buffer: The binary local_buffer.
-        :type local_buffer: str
+        :type local_buffer: bytes
         """
         self.__buffer = local_buffer
 
@@ -47,7 +47,7 @@ class SignaledBuffer(object):
         """
         Getter
         :return: The binary localBuffer
-        :rtype: str
+        :rtype: bytes
         """
         return self.__buffer
 
@@ -55,7 +55,7 @@ class SignaledBuffer(object):
         """
         Get the event.
         :return: Event
-        :rtype: Event
+        :rtype: gevent.event.Event
         """
         return self.__send_event
 

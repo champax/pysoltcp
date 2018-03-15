@@ -46,7 +46,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
     def setUp(self):
         """
         Setup
-        :return Nothing.
+
         """
 
         SolBase.voodoo_init()
@@ -68,7 +68,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
     def tearDown(self):
         """
         Setup (called on destroy)
-        :return Nothing.
+
         """
 
         if not SolBase.get_master_process():
@@ -138,11 +138,11 @@ class TestTcpServerLifeTime(unittest.TestCase):
         while SolBase.datediff(dt_start) < self.checkTimeOut:
             if len(self.tcp_server._client_connected_hash) > 0:
                 break
-            SolBase.sleep(self.checkTimeOut / 100)
+            SolBase.sleep(int(self.checkTimeOut / 100))
         logger.info("TestLog : server : wait connection : done")
 
         # Check
-        self.assertEquals(len(self.tcp_server._client_connected_hash), 1)
+        self.assertEqual(len(self.tcp_server._client_connected_hash), 1)
 
         # Ok
         logger.info("Started and connected, effectiveMs=%s", self.tcp_server.get_effective_controlinterval_ms())
@@ -162,13 +162,13 @@ class TestTcpServerLifeTime(unittest.TestCase):
         logger.info("server : wait for disconnection : done, ms=%s", SolBase.datediff(dt_start))
 
         # Check
-        self.assertEquals(len(self.tcp_server._client_connected_hash), 0)
+        self.assertEqual(len(self.tcp_server._client_connected_hash), 0)
         self.assertIsNone(self.tcpClient.current_socket)
 
     def test_server_effective_ms(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -189,67 +189,67 @@ class TestTcpServerLifeTime(unittest.TestCase):
         server_config.socket_relative_timeout_ms = 2500
         server_config.socket_min_checkinterval_ms = 0
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 2500)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 2500)
 
         server_config.socket_absolute_timeout_ms = 2500
         server_config.socket_relative_timeout_ms = 0
         server_config.socket_min_checkinterval_ms = 0
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 2500)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 2500)
 
         server_config.socket_absolute_timeout_ms = 0
         server_config.socket_relative_timeout_ms = 2500
         server_config.socket_min_checkinterval_ms = 0
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 2500)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 2500)
 
         server_config.socket_absolute_timeout_ms = 2500
         server_config.socket_relative_timeout_ms = -1
         server_config.socket_min_checkinterval_ms = 0
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 2500)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 2500)
 
         server_config.socket_absolute_timeout_ms = -1
         server_config.socket_relative_timeout_ms = 2500
         server_config.socket_min_checkinterval_ms = 0
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 2500)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 2500)
 
         server_config.socket_absolute_timeout_ms = 2500
         server_config.socket_relative_timeout_ms = 100
         server_config.socket_min_checkinterval_ms = 0
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 100)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 100)
 
         server_config.socket_absolute_timeout_ms = 100
         server_config.socket_relative_timeout_ms = 2500
         server_config.socket_min_checkinterval_ms = 0
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 100)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 100)
 
         server_config.socket_absolute_timeout_ms = 0
         server_config.socket_relative_timeout_ms = 0
         server_config.socket_min_checkinterval_ms = 500
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 0)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 0)
 
         server_config.socket_absolute_timeout_ms = -1
         server_config.socket_relative_timeout_ms = -1
         server_config.socket_min_checkinterval_ms = 500
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 0)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 0)
 
         server_config.socket_absolute_timeout_ms = 0
         server_config.socket_relative_timeout_ms = 0
         server_config.socket_min_checkinterval_ms = 0
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 0)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 0)
 
         server_config.socket_absolute_timeout_ms = -1
         server_config.socket_relative_timeout_ms = -1
         server_config.socket_min_checkinterval_ms = 0
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 0)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 0)
 
         # ----------------
         # Bounded by socket_min_checkinterval_ms
@@ -259,72 +259,72 @@ class TestTcpServerLifeTime(unittest.TestCase):
         server_config.socket_relative_timeout_ms = 2500
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 60000)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 60000)
 
         server_config.socket_absolute_timeout_ms = 2500
         server_config.socket_relative_timeout_ms = 0
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 60000)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 60000)
 
         server_config.socket_absolute_timeout_ms = 0
         server_config.socket_relative_timeout_ms = 2500
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 60000)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 60000)
 
         server_config.socket_absolute_timeout_ms = 2500
         server_config.socket_relative_timeout_ms = -1
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 60000)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 60000)
 
         server_config.socket_absolute_timeout_ms = -1
         server_config.socket_relative_timeout_ms = 2500
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 60000)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 60000)
 
         server_config.socket_absolute_timeout_ms = 2500
         server_config.socket_relative_timeout_ms = 100
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 60000)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 60000)
 
         server_config.socket_absolute_timeout_ms = 100
         server_config.socket_relative_timeout_ms = 2500
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 60000)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 60000)
 
         server_config.socket_absolute_timeout_ms = 0
         server_config.socket_relative_timeout_ms = 0
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 0)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 0)
 
         server_config.socket_absolute_timeout_ms = -1
         server_config.socket_relative_timeout_ms = -1
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 0)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 0)
 
         server_config.socket_absolute_timeout_ms = 0
         server_config.socket_relative_timeout_ms = 0
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 0)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 0)
 
         server_config.socket_absolute_timeout_ms = -1
         server_config.socket_relative_timeout_ms = -1
         server_config.socket_min_checkinterval_ms = 60000
         s = TcpServer(server_config)
-        self.assertEquals(s.get_effective_controlinterval_ms(), 0)
+        self.assertEqual(s.get_effective_controlinterval_ms(), 0)
 
     def test_absolute_timeout(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -368,7 +368,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
     def test_absolute_timeout_priortorelative(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -412,7 +412,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
     def test_relative_timeout(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -456,7 +456,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
     def test_relative_timeout_priortoabsolute(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -500,7 +500,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
     def test_do_not_close(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances

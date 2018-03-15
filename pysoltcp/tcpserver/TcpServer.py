@@ -67,7 +67,7 @@ class TcpServer(object):
         """
         Constructor.
         :param tcp_server_config: The configuration.
-        :return Nothing.
+        :type tcp_server_config: pysoltcp.tcpserver.TcpServerConfig.TcpServerConfig
         """
 
         # Check
@@ -131,14 +131,14 @@ class TcpServer(object):
     def start_server(self):
         """
         Start
-        :return Nothing.
+
         """
 
         with self.__stop_start_lock:
             logger.info("start_server : starting")
             try:
                 if self._is_started is True:
-                    logger.warn("start_server : already started, doing nothing")
+                    logger.warning("start_server : already started, doing nothing")
                     return False
 
                 # Running
@@ -166,7 +166,6 @@ class TcpServer(object):
     def destroy(self):
         """
         For spring python. Just call stop_server().
-        :return: Nothing.
         """
         logger.info("destroy : Entering, calling self.stop_server(), %s", SolBase.get_current_pid_as_string())
         self.stop_server()
@@ -174,7 +173,6 @@ class TcpServer(object):
     def stop_server(self):
         """
         Stop server
-        :return Nothing.
         """
 
         with self.__stop_start_lock:
@@ -192,7 +190,7 @@ class TcpServer(object):
                 try:
                     gevent.with_timeout(self._tcp_server_config.stop_server_timeout_ms, self._stop_server)
                 except Timeout:
-                    logger.warn("Timeout while calling low level _stop_server, some socket may be stucked")
+                    logger.warning("Timeout while calling low level _stop_server, some socket may be stucked")
 
                 # Stop
                 self._is_started = False
@@ -211,6 +209,7 @@ class TcpServer(object):
         """
         Return the configuration associated to the tcpserver.
         :return: A TcpServerConfig instance.
+        :rtype pysoltcp.tcpserver.TcpServerConfig.TcpServerConfig
         """
 
         return self._tcp_server_config
@@ -222,7 +221,6 @@ class TcpServer(object):
     def _start_server(self):
         """
         Low level start
-        :return Nothing.
         """
 
         # Allocate a server, and provide a connection callback
@@ -317,7 +315,6 @@ class TcpServer(object):
     def _stop_server(self):
         """
         Low level stop
-        :return Nothing.
         """
 
         try:
@@ -360,8 +357,10 @@ class TcpServer(object):
         """
         Callback called upon client connection.
         :param socket:  The client socket.
-        :param address: The client remove address:
-        :return Nothing.
+        :type socket: socket.socket
+        :param address: The client remote address:
+        :type address: str
+
         """
         logger.debug("_on_connection : address=%s %s", address, SolBase.get_current_pid_as_string())
 
@@ -380,7 +379,6 @@ class TcpServer(object):
     def __set_effective_controlinterval_ms(self):
         """
         Set the effective control interval in ms
-        :return: Nothing.
         """
 
         # Get values
@@ -407,6 +405,7 @@ class TcpServer(object):
         """
         Return the effective control interval in ms to apply to socket
         :return: An integer (millis)
+        :rtype int
         """
 
         return self._effective_control_interval_ms
@@ -419,8 +418,11 @@ class TcpServer(object):
         """
         Register a new client.
         :param socket:  The client socket.
-        :param address: The client remove address:
+        :type socket: socket.socket
+        :param address: The client remote address
+        :type address: str
         :return Return a TcpServerClientContext upon success, None upon failure.
+        :rtype pysoltcp.tcpserver.clientcontext.TcpServerClientContext.TcpServerClientContext
         """
 
         try:
@@ -461,7 +463,7 @@ class TcpServer(object):
             return new_client
         except Exception as e:
             # Error
-            logger.warn("extostr, ex=%s", SolBase.extostr(e))
+            logger.warning("extostr, ex=%s", SolBase.extostr(e))
 
             # Statistics
             Meters.aii("tcp.server.clientRegisterException")
@@ -478,7 +480,7 @@ class TcpServer(object):
         """
         Remove a client, asynch.
         :param client_id: The client id.
-        :return Nothing.
+        :type client_id: int
         """
 
         # Spawn
@@ -506,9 +508,9 @@ class TcpServer(object):
         """
         Remove internal
         :param old_client: oldclient
+        :type: old_client: pysoltcp.tcpserver.clientcontext.TcpServerClientContext.TcpServerClientContext
         :param evt: gevent.Event
         :type evt: gevent.Event
-        :type old_client: TcpServerClientContext
         """
 
         try:
@@ -519,7 +521,7 @@ class TcpServer(object):
             logger.debug("_remove_client_stop_internal call, cid=%s", cid)
             old_client.stop_synch_internal()
         except Exception as e:
-            logger.warn("Ex=%s", SolBase.extostr(e))
+            logger.warning("Ex=%s", SolBase.extostr(e))
         finally:
             evt.set()
 
@@ -527,9 +529,9 @@ class TcpServer(object):
         """
         Remove internal
         :param old_client: oldclient
+        :type old_client: pysoltcp.tcpserver.clientcontext.TcpServerClientContext.TcpServerClientContext
         :param evt: gevent.Event
         :type evt: gevent.Event
-        :type old_client: TcpServerClientContext
         """
 
         # -------------------------
@@ -562,7 +564,7 @@ class TcpServer(object):
                 logger.debug("stop_synch NOT CALLED (_is_running==%s + onstop_call_client_stopsynch==%s), cid=%s", self._is_running, self._tcp_server_config.onstop_call_client_stopsynch, cid)
                 pass
         except Exception as e:
-            logger.warn("Ex=%s", SolBase.extostr(e))
+            logger.warning("Ex=%s", SolBase.extostr(e))
         finally:
             evt.set()
 
@@ -570,9 +572,11 @@ class TcpServer(object):
         """
         Remove a client. Return a TcpServerClientContext upon success,
         :param client_id: The client id.
+        :type client_id: int
         :param evt: Event to signal
         :type evt: gevent.Event, None
         :return The removed TcpServerClientContext or None upon failure.
+        :rtype None,pysoltcp.tcpserver.clientcontext.TcpServerClientContext.TcpServerClientContext
         """
 
         logger.debug("entering, client_id=%s", client_id)
@@ -622,8 +626,7 @@ class TcpServer(object):
                     Meters.aii("tcp.server.client_remove_timeout_business")
 
             except Exception as e:
-                logger.warn("Exception in _remove_client_stop_business client_id=%s, ex=%s", client_id,
-                            SolBase.extostr(e))
+                logger.warning("Exception in _remove_client_stop_business client_id=%s, ex=%s", client_id, SolBase.extostr(e))
 
             # ------------------------------
             # Out of lock : call async : INTERNAL
@@ -653,8 +656,7 @@ class TcpServer(object):
                     # Stat
                     Meters.aii("tcp.server.client_remove_timeout_internal")
             except Exception as e:
-                logger.warn("Exception in _remove_client_stop_internal client_id=%s, ex=%s", client_id,
-                            SolBase.extostr(e))
+                logger.warning("Exception in _remove_client_stop_internal client_id=%s, ex=%s", client_id, SolBase.extostr(e))
 
             # Statistics
             Meters.aii("tcp.server.client_connected", -1)
@@ -666,7 +668,7 @@ class TcpServer(object):
             return old_client
         except Exception as e:
             # Error
-            logger.warn("Exception, ex=%s", SolBase.extostr(e))
+            logger.warning("Exception, ex=%s", SolBase.extostr(e))
 
             # Statistics
             Meters.aii("tcp.server.client_remove_exception")
@@ -679,15 +681,17 @@ class TcpServer(object):
     def _remove_all_client(self):
         """
         Remove all clients.
-        :return nothing.
         """
         try:
+            # PY3 : Cannot iterate through keys (it do not copy anymore)
+            # => we force a list alloc
+
             # Pass through all client and remove all
-            for client_id in self._client_connected_hash.keys():
+            for client_id in list(self._client_connected_hash.keys()):
                 self._remove_client(client_id, None)
         except Exception as e:
             # Error
-            logger.warn("_remove_all_client : Exception, ex=%s", SolBase.extostr(e))
+            logger.warning("_remove_all_client : Exception, ex=%s", SolBase.extostr(e))
 
     # =====================================================
     # CLIENT MANAGEMENT : GET FROM HASHMAP
@@ -697,7 +701,9 @@ class TcpServer(object):
         """
         Get a client from id. Return None if not found.
         :param client_id: The client Id
+        :type client_id: int
         :return A TcpServerClientContext or None if not found.
+        :rtype None,pysoltcp.tcpserver.clientcontext.TcpServerClientContext.TcpServerClientContext
         """
         with self._client_connected_hash_lock:
             # Check

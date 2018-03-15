@@ -3,9 +3,9 @@
     Tests.
 """
 import logging
-import shutil
 
 import gevent
+import shutil
 from os.path import abspath
 from os.path import dirname
 from pysolbase.SolBase import SolBase

@@ -42,9 +42,14 @@ class TcpServerQueuedClientContextFactory(TcpServerClientContextAbstractFactory)
         """
         Return a new client context instance.
         :param tcp_server: The tcpserver instance.
-        :param  client_id: an integer, which is the unique id of this client.
-        :param  client_socket: The server socket.
-        :param  client_addr: The remote addr information.
+        :type tcp_server: pysoltcp.tcpserver.TcpServer.TcpServer
+        :param client_id: an integer, which is the unique id of this client.
+        :type client_id: int
+        :param client_socket: The server socket.
+        :type client_socket: socket.socket
+        :param client_addr: The remote addr information.
+        :type client_addr: str
         :return Returned object MUST be a subclass of TcpServerClientContext.
+        :rtype pysoltcp.tcpserver.queuedclientcontext.TcpServerQueuedClientContext.TcpServerQueuedClientContext
         """
         return TcpServerQueuedClientContext(tcp_server, client_id, client_socket, client_addr)

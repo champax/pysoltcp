@@ -55,7 +55,7 @@ class TestTcpPing(unittest.TestCase):
     def setUp(self):
         """
         Setup
-        :return Nothing.
+
         """
 
         Utility.gevent_reset()
@@ -95,7 +95,7 @@ class TestTcpPing(unittest.TestCase):
     def tearDown(self):
         """
         Setup (called on destroy)
-        :return Nothing.
+
         """
 
         try:
@@ -115,7 +115,7 @@ class TestTcpPing(unittest.TestCase):
     def _start_server_and_check(self, deadlock=False):
         """
         Test
-        :return Nothing.
+
         :param deadlock: If true, use a server context that deadlock on stop
         :type deadlock: bool
         """
@@ -157,7 +157,7 @@ class TestTcpPing(unittest.TestCase):
     def _stop_server_and_check(self):
         """
         Test
-        :return Nothing.
+
         """
         # Stop
         self.tcp_server.stop_server()
@@ -170,7 +170,7 @@ class TestTcpPing(unittest.TestCase):
     def _stop_server_and_check_withoneclientconnected(self):
         """
         Test
-        :return Nothing.
+
         """
         # Check
         logger.info("TestLog : server : get server context")
@@ -207,7 +207,7 @@ class TestTcpPing(unittest.TestCase):
     def _start_one_client_checkstop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Start
@@ -222,7 +222,7 @@ class TestTcpPing(unittest.TestCase):
     def _start_one_client(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Client config
@@ -255,16 +255,16 @@ class TestTcpPing(unittest.TestCase):
         while SolBase.datediff(dt_start) < self.checkTimeOutMs:
             if len(self.tcp_server._client_connected_hash) > 0:
                 break
-            SolBase.sleep(self.checkTimeOutMs / 100)
+            SolBase.sleep(int(self.checkTimeOutMs / 100))
         logger.info("TestLog : server : wait connection : done")
 
         # Check
-        self.assertEquals(len(self.tcp_server._client_connected_hash), 1)
+        self.assertEqual(len(self.tcp_server._client_connected_hash), 1)
 
     def _stop_one_client(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Check
@@ -306,7 +306,7 @@ class TestTcpPing(unittest.TestCase):
                 logger.info("TestLog : server : wait for disconnection : done")
                 break
             else:
-                SolBase.sleep(self.checkTimeOutMs / 100)
+                SolBase.sleep(int(self.checkTimeOutMs / 100))
 
         # Check
         logger.info("TestLog : server : check for disconnection")
@@ -323,7 +323,7 @@ class TestTcpPing(unittest.TestCase):
     def _start_one_client_checkallping_stop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Start
@@ -359,8 +359,8 @@ class TestTcpPing(unittest.TestCase):
         # Final check
         client_ko = PingTestTools.get_client_ko_count(True)
         server_ko = PingTestTools.get_server_ko_count(True)
-        self.assertEquals(client_ko, 0)
-        self.assertEquals(server_ko, 0)
+        self.assertEqual(client_ko, 0)
+        self.assertEqual(server_ko, 0)
 
         # Stop
         self._stop_one_client()
@@ -373,7 +373,7 @@ class TestTcpPing(unittest.TestCase):
     def test_tcp_svr_start_cli_connect(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance
@@ -402,7 +402,7 @@ class TestTcpPing(unittest.TestCase):
     def test_tcp_svr_start_cli_connect_clidisco_clicanreco_deadlock(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance
@@ -429,7 +429,7 @@ class TestTcpPing(unittest.TestCase):
                     logger.info("TestLog : server : wait for timeout on stop calls : done")
                     break
                 else:
-                    SolBase.sleep(self.checkTimeOutMs / 100)
+                    SolBase.sleep(int(self.checkTimeOutMs / 100))
 
             # Check
             self.assertEqual(Meters.aig("tcp.server.client_remove_timeout_internal"), 1)
@@ -452,7 +452,7 @@ class TestTcpPing(unittest.TestCase):
                     logger.info("TestLog : server : wait for timeout on stop calls : done")
                     break
                 else:
-                    SolBase.sleep(self.checkTimeOutMs / 100)
+                    SolBase.sleep(int(self.checkTimeOutMs / 100))
 
             # Check
             self.assertEqual(Meters.aig("tcp.server.client_remove_timeout_internal"), 2)
@@ -470,7 +470,7 @@ class TestTcpPing(unittest.TestCase):
     def test_tcp_svr_start_cli_connect_svrstop_onstopfalse(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance
@@ -502,7 +502,7 @@ class TestTcpPing(unittest.TestCase):
     def test_tcp_svr_start_cli_connect_svrstop_onstoptrue(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance
@@ -538,7 +538,7 @@ class TestTcpPing(unittest.TestCase):
     def test_tcp_svr_start_cli_connectallpingcheck(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance
@@ -571,7 +571,7 @@ class TestTcpPing(unittest.TestCase):
     def test_tcp_svr_start_cli_connect_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance
@@ -607,7 +607,7 @@ class TestTcpPing(unittest.TestCase):
     def test_tcp_svr_start_cli_connectallpingcheck_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance

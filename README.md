@@ -23,7 +23,7 @@ It supports:
 - Server forking
 - Server context factory for server side protocol handling
 - Client derivation with _on_receive override for client side protocol handling
-- Intrumented via Meters (pysolmeters)
+- Instrumented via Meters (pysolmeters)
 
 Please note that, by design, synchronous TCP sockets are not supported.
 

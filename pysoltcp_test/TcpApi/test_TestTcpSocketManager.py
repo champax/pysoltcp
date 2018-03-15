@@ -82,7 +82,7 @@ class TestTcpSocketManager(unittest.TestCase):
     def tearDown(self):
         """
         Setup (called on destroy)
-        :return Nothing.
+
         """
         pass
 

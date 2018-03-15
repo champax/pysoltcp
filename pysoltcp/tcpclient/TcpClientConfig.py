@@ -67,7 +67,7 @@ class TcpClientConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param target_addr: The target address.
-        :return Nothing
+        :type target_addr: str
         """
         if not SolBase.is_string_not_empty(target_addr):
             logger.error("TcpClientConfig : _setTargetAddress : not a string or empty, class=%s", SolBase.get_classname(target_addr))
@@ -78,7 +78,8 @@ class TcpClientConfig(object):
     def _get_targetaddr(self):
         """
         Getter
-        return: The target address.
+        :return: The target address.
+        :rtype str
         """
         return self._target_addr
 
@@ -86,13 +87,13 @@ class TcpClientConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param target_port: The target port.
-        :return Nothing.
+        :type target_port: int
         """
         if not SolBase.is_int(target_port):
             logger.error("TcpClientConfig : _set_target_port : not a int, class=%s", SolBase.get_classname(target_port))
             raise Exception("TcpClientConfig : _set_target_port : not a int")
         elif target_port == 0:
-            logger.warn("TcpClientConfig : _set_target_port : newPort==0")
+            logger.warning("TcpClientConfig : _set_target_port : newPort==0")
             raise Exception("TcpClientConfig : _set_target_port : newPort==0")
         else:
             self._target_port = target_port
@@ -101,7 +102,7 @@ class TcpClientConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param ms: The timeout in millis or None.
-        :return Nothing.
+        :type ms: int,None
         """
         self._timeout_ms = ms
 
@@ -109,22 +110,23 @@ class TcpClientConfig(object):
         """
         Getter
         :return The target port.
+        :rtype int
         """
         return self._target_port
 
     def _set_ssl_enable(self, b):
         """
         Enable or disable ssl.
-        :param b: Boolean.
-        :return: Nothing.
+        :param b: bool.
+        :type b: bool
         """
         self._ssl_enable = b
 
     def _set_debug_log(self, b):
         """
         Enable or disable debug log.
-        :param b: Boolean.
-        :return: Nothing.
+        :param b: bool.
+        :type b: bool
         """
         self._debug_log = b
 
@@ -132,6 +134,7 @@ class TcpClientConfig(object):
         """
         Getter.
         :return: A boolean.
+        :rtype bool
         """
         return self._ssl_enable
 
@@ -139,6 +142,7 @@ class TcpClientConfig(object):
         """
         Getter.
         :return: An integer or None.
+        :rtype int,None
         """
         return self._timeout_ms
 
@@ -146,6 +150,7 @@ class TcpClientConfig(object):
         """
         Getter.
         :return: An integer or None.
+        :rtype int,None
         """
         return self._debug_log
 
@@ -153,7 +158,7 @@ class TcpClientConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param proxy_addr: The proxy target address.
-        :return Nothing
+        :type proxy_addr: str
         """
         if not SolBase.is_string_not_empty(proxy_addr):
             logger.error("TcpClientConfig : _setProxyAddress : not a string or empty, class=%s",
@@ -165,7 +170,8 @@ class TcpClientConfig(object):
     def _get_proxy_addr(self):
         """
         Getter
-        return: The proxy target address.
+        :return: The proxy target address.
+        :rtype str
         """
         return self._proxy_addr
 
@@ -173,13 +179,13 @@ class TcpClientConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param proxy_port: The target proxy port.
-        :return Nothing.
+        :type proxy_port: int
         """
         if not SolBase.is_int(proxy_port):
             logger.error("TcpClientConfig : _set_proxy_port : not a int, class=%s", SolBase.get_classname(proxy_port))
             raise Exception("TcpClientConfig : _set_proxy_port : not a int")
         elif proxy_port == 0:
-            logger.warn("TcpClientConfig : _set_proxy_port : newPort==0")
+            logger.warning("TcpClientConfig : _set_proxy_port : newPort==0")
             raise Exception("TcpClientConfig : _set_proxy_port : newPort==0")
         else:
             self._proxy_port = proxy_port
@@ -188,6 +194,7 @@ class TcpClientConfig(object):
         """
         Getter
         :return The target port.
+        :rtype int
         """
         return self._proxy_port
 
@@ -195,7 +202,7 @@ class TcpClientConfig(object):
         """
         Enable or disable proxy.
         :param is_enable: Boolean.
-        :return: Nothing.
+        :type is_enable: bool
         """
         self._proxy_enable = is_enable
 
@@ -203,6 +210,7 @@ class TcpClientConfig(object):
         """
         Getter.
         :return: A boolean.
+        :rtype bool
         """
         return self._proxy_enable
 
@@ -214,6 +222,7 @@ class TcpClientConfig(object):
         """
         Enable or disable tcp keep alive.
         :param is_enable: Boolean.
+        :type is_enable: bool
         :return: Nothing.
         """
         self._tcp_keepalive_enabled = is_enable
@@ -222,6 +231,7 @@ class TcpClientConfig(object):
         """
         Getter.
         :return: A boolean.
+        :rtype bool
         """
         return self._tcp_keepalive_enabled
 
@@ -229,13 +239,14 @@ class TcpClientConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param value: Value.
-        :return Nothing.
+        :type value: int
+        
         """
         if not SolBase.is_int(value):
             logger.error("TcpClientConfig : _set_tcp_keepalive_probes_senddelayms : not a int, class=%s", SolBase.get_classname(value))
             raise Exception("TcpClientConfig : _set_tcp_keepalive_probes_senddelayms : not a int")
         elif value == 0:
-            logger.warn("TcpClientConfig : _set_tcp_keepalive_probes_senddelayms : newPort==0")
+            logger.warning("TcpClientConfig : _set_tcp_keepalive_probes_senddelayms : newPort==0")
             raise Exception("TcpClientConfig : _set_tcp_keepalive_probes_senddelayms : newPort==0")
         else:
             self._tcp_keepalive_probes_senddelayms = value
@@ -252,13 +263,14 @@ class TcpClientConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param value: Value.
-        :return Nothing.
+        :type value: int
+        
         """
         if not SolBase.is_int(value):
             logger.error("TcpClientConfig : _set_tcpkeepalive_probes_failedcount : not a int, class=%s", SolBase.get_classname(value))
             raise Exception("TcpClientConfig : _set_tcpkeepalive_probes_failedcount : not a int")
         elif value == 0:
-            logger.warn("TcpClientConfig : _set_tcpkeepalive_probes_failedcount : newPort==0")
+            logger.warning("TcpClientConfig : _set_tcpkeepalive_probes_failedcount : newPort==0")
             raise Exception("TcpClientConfig : _set_tcpkeepalive_probes_failedcount : newPort==0")
         else:
             self._tcp_keepalive_probes_failedcount = value
@@ -275,13 +287,14 @@ class TcpClientConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param value: Value.
-        :return Nothing.
+        :type value: int
+        
         """
         if not SolBase.is_int(value):
             logger.error("TcpClientConfig : _set_tcpkeepalive_probes_sendintervalms : not a int, class=%s", SolBase.get_classname(value))
             raise Exception("TcpClientConfig : _set_tcpkeepalive_probes_sendintervalms : not a int")
         elif value == 0:
-            logger.warn("TcpClientConfig : _set_tcpkeepalive_probes_sendintervalms : newPort==0")
+            logger.warning("TcpClientConfig : _set_tcpkeepalive_probes_sendintervalms : newPort==0")
             raise Exception("TcpClientConfig : _set_tcpkeepalive_probes_sendintervalms : newPort==0")
         else:
             self._tcp_keepalive_probes_sendintervalms = value

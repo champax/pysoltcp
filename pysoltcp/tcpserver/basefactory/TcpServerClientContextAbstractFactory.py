@@ -47,9 +47,14 @@ class TcpServerClientContextAbstractFactory(object):
         Return a new client context instance.
 
         :param tcp_server: The tcpserver instance.
+        :type tcp_server: pysoltcp.tcpserver.TcpServer.TcpServer
         :param client_id: an integer, which is the unique id of this client.
+        :type client_id: int
         :param client_socket: The server socket.
+        :type client_socket: socket.socket
         :param client_addr: The remote addr information.
+        :type client_addr: str
         :return Returned object MUST be a subclass of TcpServerClientContext.
+        :rtype pysoltcp.tcpserver.clientcontext.TcpServerClientContext.TcpServerClientContext
         """
         raise Exception("get_new_clientcontext : this MUST be implemented")

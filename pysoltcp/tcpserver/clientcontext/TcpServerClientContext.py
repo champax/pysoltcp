@@ -24,6 +24,7 @@
 import logging
 
 import gevent
+# noinspection PyProtectedMember
 from gevent.queue import Empty
 from pysolbase.SolBase import SolBase
 from pysolmeters.Meters import Meters
@@ -43,13 +44,19 @@ class TcpServerClientContext(TcpSocketManager):
     def __init__(self, tcp_server, client_id, client_socket, client_addr, cb_stop_asynch=None, cb_on_receive=None):
         """
         Constructor.
-        :param tcp_server: The tcp server instance.
-        :param client_id: The client id.
-        :param client_socket: The client socket.
-        :param client_addr: The client remote address.
+        :param tcp_server: The tcpserver instance.
+        :type tcp_server: pysoltcp.tcpserver.TcpServer.TcpServer
+        :param client_id: an integer, which is the unique id of this client.
+        :type client_id: int
+        :param client_socket: The server socket.
+        :type client_socket: socket.socket
+        :param client_addr: The remote addr information.
+        :type client_addr: str
         :param cb_stop_asynch: Callback to call upon stop. If None, self.stop_asynch is used.
+        :type cb_stop_asynch: Callable
         :param cb_on_receive: Callback to call upon socket receive. If none, self._on_receive is used.
-        :return Nothing.
+        :type cb_on_receive: Callable
+
         """
 
         # Check
@@ -99,7 +106,7 @@ class TcpServerClientContext(TcpSocketManager):
         self._write_greenlet = None
         self._control_greenlet = None
 
-        # Faster str
+        # Faster bytes
         self._socket_local_ip = None
         self._socket_local_port = None
         self._socket_remote_ip = None
@@ -121,14 +128,14 @@ class TcpServerClientContext(TcpSocketManager):
         try:
             self._socket_local_ip = self.current_socket.getsockname()[0]
             return self._socket_local_ip
-        except:
+        except Exception:
             return "exception"
 
     def __get_socket_local_port(self):
         """
         Get socket local ip
-        :return: String
-        :rtype: str
+        :return: int
+        :rtype: int
         """
 
         if self._socket_local_port:
@@ -137,7 +144,7 @@ class TcpServerClientContext(TcpSocketManager):
         try:
             self._socket_local_port = self.current_socket.getsockname()[1]
             return self._socket_local_port
-        except:
+        except Exception:
             return "exception"
 
     def __get_socket_remote_ip(self):
@@ -152,14 +159,14 @@ class TcpServerClientContext(TcpSocketManager):
         try:
             self._socket_remote_ip = self.current_socket.getpeername()[0]
             return self._socket_remote_ip
-        except:
+        except Exception:
             return "exception"
 
     def __get_socket_remote_port(self):
         """
         Get socket remote port
-        :return: String
-        :rtype: str
+        :return: int
+        :rtype: int
         """
         if self._socket_remote_port:
             return self._socket_remote_port
@@ -168,14 +175,14 @@ class TcpServerClientContext(TcpSocketManager):
         try:
             self._socket_remote_port = self.current_socket.getpeername()[1]
             return self._socket_remote_port
-        except:
+        except Exception:
             return "exception"
 
     def __str__(self):
         """
         To string override
         :return: A string
-        :rtype string
+        :rtype str
         """
 
         return "c.id={0}*c.cli={1}:{2}/{3}:{4}*{5}".format(
@@ -195,11 +202,12 @@ class TcpServerClientContext(TcpSocketManager):
         """
         Start processing our socket read/write.
         :return True if success, false otherwise.
+        :rtype bool
         """
         try:
             # Check
             if self.is_connected:
-                logger.warn("TcpServerClientContext : start : already connected, doing nothing, self=%s", self)
+                logger.warning("TcpServerClientContext : start : already connected, doing nothing, self=%s", self)
                 return False
 
             # Done
@@ -236,6 +244,7 @@ class TcpServerClientContext(TcpSocketManager):
         Request a stop to the tcp_server.. It will call _stopInternal(), via tcp_server._remove_client_asynch.
         Do NOT OVERRIDE this method.
         :return True if success, false otherwise.
+        :rtype bool
         """
         try:
             if not self.is_connected:
@@ -256,6 +265,7 @@ class TcpServerClientContext(TcpSocketManager):
         This method is RESERVED for EXTERNAL class stop requests.
         You can OVERRIDE this method at HIGHER level to be informed of a socket closure.
         :return True if success, false otherwise.
+        :rtype bool
         """
 
         return True
@@ -270,6 +280,7 @@ class TcpServerClientContext(TcpSocketManager):
         - Any external queries (redis/mongo, whatever)
         JUST HANDLE IN MEMORY STUFF.
         :return True if success, false otherwise.
+        :rtype bool
         """
 
         try:
@@ -308,7 +319,7 @@ class TcpServerClientContext(TcpSocketManager):
             while True:
                 try:
                     item = self.send_queue.get(False)
-                    if isinstance(item, str):
+                    if isinstance(item, bytes):
                         total_len += len(item)
                     elif isinstance(item, SignaledBuffer):
                         total_len += len(item.binary_buffer)
@@ -340,6 +351,7 @@ class TcpServerClientContext(TcpSocketManager):
         """
         Getter
         :return The client id.
+        :rtype int
         """
         return self._client_id
 
@@ -347,13 +359,15 @@ class TcpServerClientContext(TcpSocketManager):
         """
         Getter
         :return The client socket.
+        :rtype socket.socket
         """
         return self.current_socket
 
     def get_client_addr(self):
         """
         Getter
-        return: The client remote address.
+        :return: The client remote address.
+        :rtype str
         """
         return self._client_addr
 
@@ -365,7 +379,7 @@ class TcpServerClientContext(TcpSocketManager):
         """
         Called on socket receive.
         :param binary_buffer: The received buffer.
-        :return Nothing.
+        :type binary_buffer: bytes
         """
 
         # Got something
@@ -380,7 +394,6 @@ class TcpServerClientContext(TcpSocketManager):
         """
         Schedule the control greenlet for next run.
         Note: We do not use lock to minimize per socket memory usage...
-        :return: Nothing.
         """
 
         # Check
@@ -399,7 +412,6 @@ class TcpServerClientContext(TcpSocketManager):
         """
         unschedule the control greenlet.
         Note: We do not use lock to minimize per socket memory usage...
-        :return: Nothing.
         """
 
         if self._control_greenlet:
@@ -410,7 +422,6 @@ class TcpServerClientContext(TcpSocketManager):
         """
         Control us. May force ourself to exit upon inactivity.
         Note: We do not use lock to minimize per socket memory usage...
-        :return: Nothing.
         """
 
         logger.info("Entering")

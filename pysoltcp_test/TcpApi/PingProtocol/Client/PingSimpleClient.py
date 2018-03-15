@@ -22,13 +22,14 @@
 # ===============================================================================
 """
 import logging
-from Queue import Empty
-from random import randint
 from threading import RLock
 
 import gevent
+# noinspection PyProtectedMember
+from gevent.queue import Empty
 from pysolbase.SolBase import SolBase
 from pysolmeters.Meters import Meters
+from random import randint
 
 from pysoltcp.tcpclient.TcpSimpleClient import TcpSimpleClient
 
@@ -138,13 +139,13 @@ class PingSimpleClient(TcpSimpleClient):
     def _schedule_client_helloservertimeout(self):
         """
         Schedule a ping timeout
-        :return Nothing.
+
         """
 
         with self._protocol_lock:
             # Check
             if self._hello_timeout_greenlet:
-                logger.warn("_hello_timeout_greenlet is not None, killing")
+                logger.warning("_hello_timeout_greenlet is not None, killing")
                 Meters.aii("ping.client.schedule_client_hello_server_timeout_error")
                 self._unschedule_client_helloservertimeout()
                 # Go
@@ -153,7 +154,7 @@ class PingSimpleClient(TcpSimpleClient):
     def _unschedule_client_helloservertimeout(self):
         """
         Unschedule a ping
-        :return Nothing.
+
         """
         with self._protocol_lock:
             if self._hello_timeout_greenlet:
@@ -168,12 +169,12 @@ class PingSimpleClient(TcpSimpleClient):
         """
         Schedule a ping
         :param randomize_delay: Randomize delay if true.
-        :return Nothing.
+
         """
         with self._protocol_lock:
             # Check
             if self._ping_greenlet:
-                logger.warn("PingSimpleClient : _schedule_clientping : _ping_greenlet is not None, killing")
+                logger.warning("PingSimpleClient : _schedule_clientping : _ping_greenlet is not None, killing")
                 Meters.aii("ping.client.schedule_client_ping_error")
                 self._unschedule_client_ping()
 
@@ -190,7 +191,7 @@ class PingSimpleClient(TcpSimpleClient):
     def _unschedule_client_ping(self):
         """
         Unschedule a ping
-        :return Nothing.
+
         """
         with self._protocol_lock:
             if self._ping_greenlet:
@@ -204,13 +205,13 @@ class PingSimpleClient(TcpSimpleClient):
     def _schedule_client_pingservertimeout(self):
         """
         Schedule a ping timeout
-        :return Nothing.
+
         """
 
         with self._protocol_lock:
             # Check
             if self._ping_timeout_greenlet:
-                logger.warn("_ping_timeout_greenlet is not None, killing")
+                logger.warning("_ping_timeout_greenlet is not None, killing")
                 Meters.aii("ping.client.schedule_client_pingtimeouterror")
                 self._unschedule_client_pingservertimeout()
                 # Go
@@ -219,7 +220,7 @@ class PingSimpleClient(TcpSimpleClient):
     def _unschedule_client_pingservertimeout(self):
         """
         Unschedule a ping
-        :return Nothing.
+
         """
         with self._protocol_lock:
             if self._ping_timeout_greenlet:
@@ -234,7 +235,7 @@ class PingSimpleClient(TcpSimpleClient):
         """
         Callback called upon server receive.
         :param binary_buffer: The binary buffer received.
-        :return Nothing.
+
         """
 
         # Received something...
@@ -249,7 +250,7 @@ class PingSimpleClient(TcpSimpleClient):
                 # Try
                 item = self.get_from_receive_queue()
                 # Process
-                self._process_item(item)
+                self._process_item(SolBase.binary_to_unicode(item, "utf-8"))
             except Empty:
                 break
 
@@ -261,7 +262,7 @@ class PingSimpleClient(TcpSimpleClient):
         """
         Process a received item
         :param item: The received item.
-        :return Nothing.
+        :type item: str
         """
 
         # PROTOCOL             => Any send failed on socket : fatal.
@@ -290,7 +291,7 @@ class PingSimpleClient(TcpSimpleClient):
     def _protocol_invalid(self):
         """
         Invalid procotol
-        :return Nothing.
+
         """
         Meters.aii("ping.client.invalid_protocol")
 
@@ -301,7 +302,7 @@ class PingSimpleClient(TcpSimpleClient):
     def _protocol_client_hello_send(self):
         """
         Must send a hello
-        :return Nothing.
+
         """
         with self._protocol_lock:
             # Schedule a timeout
@@ -311,7 +312,7 @@ class PingSimpleClient(TcpSimpleClient):
             self.dt_hello_send = SolBase.datecurrent()
 
             # Send a ping
-            b = self.send_text_to_socket("C.HI")
+            b = self.send_unicode_to_socket("C.HI")
             if not b:
                 # Stat
                 logger.error("send failed, fatal, disconnecting")
@@ -327,7 +328,7 @@ class PingSimpleClient(TcpSimpleClient):
         """
         Received a hello reply
         :param item: Received server reply ("C.HI.REPLY PID=...")
-        :return Nothing.
+
         """
 
         with self._protocol_lock:
@@ -352,7 +353,7 @@ class PingSimpleClient(TcpSimpleClient):
     def _protocol_client_hello_server_timeout(self):
         """
         Hello timeout
-        :return Nothing.
+
         """
 
         with self._protocol_lock:
@@ -374,7 +375,7 @@ class PingSimpleClient(TcpSimpleClient):
     def _protocol_server_ping_receive(self):
         """
         Received a server ping
-        :return Nothing.
+
         """
 
         with self._protocol_lock:
@@ -382,7 +383,7 @@ class PingSimpleClient(TcpSimpleClient):
             Meters.aii("ping.client.server_ping_receive")
 
             # Reply
-            b = self.send_text_to_socket("S.PING.REPLY")
+            b = self.send_unicode_to_socket("S.PING.REPLY")
             if not b:
                 # Stat
                 logger.error("send failed, fatal, disconnecting")
@@ -400,7 +401,7 @@ class PingSimpleClient(TcpSimpleClient):
     def _protocol_client_ping_send(self):
         """
         Must send a client ping
-        :return Nothing.
+
         """
         with self._protocol_lock:
             # Reset (we are called by it)
@@ -413,7 +414,7 @@ class PingSimpleClient(TcpSimpleClient):
             self.dt_last_ping_send = SolBase.datecurrent()
 
             # Send a ping
-            b = self.send_text_to_socket("C.PING")
+            b = self.send_unicode_to_socket("C.PING")
             if not b:
                 # Stat
                 logger.error("send failed, fatal, disconnecting")
@@ -427,7 +428,7 @@ class PingSimpleClient(TcpSimpleClient):
     def _protocol_client_ping_server_reply(self):
         """
         A client ping has been replied
-        :return Nothing.
+
         """
 
         with self._protocol_lock:
@@ -451,16 +452,16 @@ class PingSimpleClient(TcpSimpleClient):
     def _protocol_client_pingserver_timeout(self):
         """
         Called when a ping has time-out (ie no reply from server)
-        :return Nothing.
+
         """
 
         with self._protocol_lock:
-            logger.warn("ping timeout, rescheduling ping, ms=%s", SolBase.datediff(self.dt_last_ping_send))
+            logger.warning("ping timeout, rescheduling ping, ms=%s", SolBase.datediff(self.dt_last_ping_send))
 
             # Reset (we are called by it)
             if self._ping_timeout_greenlet is None:
                 # Greenlet none, not normal, we are called by it
-                logger.warn("_ping_timeout_greenlet None")
+                logger.warning("_ping_timeout_greenlet None")
 
             self._ping_timeout_greenlet = None
 

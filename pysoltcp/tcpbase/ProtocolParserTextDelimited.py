@@ -34,7 +34,7 @@ class ProtocolParserTextDelimited(object):
     """
 
     @classmethod
-    def parse_protocol(cls, previous_buffer, input_buffer, gevent_queue, separator="\n", single_item_processing=False):
+    def parse_protocol(cls, previous_buffer, input_buffer, gevent_queue, separator=b"\n", single_item_processing=False):
         """
         Parse a received protocol.
         - For all COMPLETE token : enqueue in the provided queue (method : put)
@@ -42,11 +42,17 @@ class ProtocolParserTextDelimited(object):
         - Return None if no INCOMPLETE token remains
         :param cls: Our class.
         :param previous_buffer: The previous incomplete buffer.
+        :type previous_buffer: bytes,None
         :param input_buffer: The new buffer.
+        :type input_buffer: bytes,None
         :param gevent_queue: A gevent queue, which will be populated with complete items.
-        :param separator: The separator to use.
+        :type gevent_queue: Queue
+        :param separator: The separator to use
+        :type separator: bytes
         :param single_item_processing: If true, process only one item then exit.
+        :type single_item_processing: bool
         :return: The new incomplete buffer.
+        :rtype bytes
         """
 
         # - ar[0] : a string
@@ -59,7 +65,7 @@ class ProtocolParserTextDelimited(object):
         if input_buffer:
             cur_buf = input_buffer
         else:
-            cur_buf = ""
+            cur_buf = b""
 
         # Prefix by prev_buf
         if prev_buf:
@@ -67,6 +73,8 @@ class ProtocolParserTextDelimited(object):
             prev_buf = None
 
         while True:
+            # Need separator as bytes
+            # noinspection PyTypeChecker
             ar = cur_buf.partition(separator)
 
             # Check ar[1]

@@ -86,7 +86,8 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param client_factory : must be an instance of the factory, not the class itself.
-        :return Nothing.
+        :type client_factory: pysoltcp.tcpserver.basefactory.TcpServerClientContextAbstractFactory.TcpServerClientContextAbstractFactory
+
         """
         if client_factory is None:
             logger.error("client_factory none")
@@ -101,7 +102,7 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param listen_addr: The listen address.
-        :return Nothing.
+        :type listen_addr: str
         """
         if not SolBase.is_string_not_empty(listen_addr):
             logger.error("not a string or empty, class=%s", SolBase.get_classname(listen_addr))
@@ -113,7 +114,7 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param listen_port: The listen port.
-        :return Nothing.
+        :type listen_port: int
         """
 
         listen_port = listen_port
@@ -124,7 +125,7 @@ class TcpServerConfig(object):
             logger.error("not a int, class=%s", SolBase.get_classname(listen_port))
             raise Exception("not a int")
         elif listen_port == 0:
-            logger.warn("newPort==0")
+            logger.warning("newPort==0")
             raise Exception("newPort==0")
         else:
             self._listen_port = listen_port
@@ -133,7 +134,7 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param ms: Time out in ms.
-        :return Nothing.
+        :type ms: int
         """
 
         cms = ms
@@ -151,7 +152,7 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param ms: Time out in ms.
-        :return Nothing.
+        :type ms: int
         """
 
         cms = ms
@@ -169,7 +170,7 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param ms: Time out in ms.
-        :return Nothing.
+        :type ms: int
         """
 
         cms = ms
@@ -186,7 +187,7 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param cpc: The number of child process count. If zero, no fork is performed (default).
-        :return Nothing.
+        :type cpc: int
         """
 
         child_process_count = cpc
@@ -198,7 +199,7 @@ class TcpServerConfig(object):
             logger.error("not a int, class=%s", SolBase.get_classname(child_process_count))
             raise Exception("not a int")
         elif child_process_count < 0:
-            logger.warn("child_process_count<0")
+            logger.warning("child_process_count<0")
             raise Exception("child_process_count<0")
         else:
             self._child_process_count = child_process_count
@@ -207,6 +208,7 @@ class TcpServerConfig(object):
         """
         Getter
         :param b: A boolean.
+        :type b: bool
         """
 
         mb = b
@@ -223,6 +225,7 @@ class TcpServerConfig(object):
         """
         Getter
         :param b: A boolean.
+        :type b: bool
         """
 
         mb = b
@@ -239,7 +242,7 @@ class TcpServerConfig(object):
         """
         Enable or disable ssl.
         :param b: Boolean.
-        :return: Nothing.
+        :type b: bool
         """
 
         is_enable = b
@@ -256,7 +259,9 @@ class TcpServerConfig(object):
         """
         Set the ssl key file. Raise exception upon error.
         :param key_file: A valid key file. Must exist and be accessible.
+        :type key_file: str
         :return: True upon success, false otherwise.
+        :rtype bool
         """
         # Check
         if key_file is None or (SolBase.is_string(key_file) and len(key_file) == 0):
@@ -264,11 +269,11 @@ class TcpServerConfig(object):
             return
 
         if not SolBase.is_string_not_empty(key_file):
-            logger.warn("not a string, class=%s", SolBase.get_classname(key_file))
+            logger.warning("not a string, class=%s", SolBase.get_classname(key_file))
             raise Exception("not a string")
 
         if not FileUtility.is_file_exist(key_file):
-            logger.warn("key_file do not exist or is not accessible, key_file=%s", key_file)
+            logger.warning("key_file do not exist or is not accessible, key_file=%s", key_file)
 
         # Set
         self._ssl_key_file = key_file
@@ -277,7 +282,7 @@ class TcpServerConfig(object):
         """
         Set the ssl certificate file. Raise exception upon error.
         :param cert_file: A valid certificate file. Must exist and be accessible.
-        :return: Nothing.
+        :type cert_file: str
         """
 
         # Check
@@ -291,7 +296,7 @@ class TcpServerConfig(object):
 
         # Check
         if not FileUtility.is_file_exist(cert_file):
-            logger.warn("cert_file do not exist or is not accessible, cert_file=%s", cert_file)
+            logger.warning("cert_file do not exist or is not accessible, cert_file=%s", cert_file)
 
         # Set
         self._ssl_certificate_file = cert_file
@@ -300,6 +305,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return The client factory.
+        :rtype pysoltcp.tcpserver.basefactory.TcpServerClientContextAbstractFactory.TcpServerClientContextAbstractFactory
         """
         return self._client_factory
 
@@ -307,6 +313,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return The listen port.
+        :rtype int
         """
         return self._listen_port
 
@@ -314,6 +321,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return The value.
+        :rtype int
         """
         return self._ssl_handshake_timeout_ms
 
@@ -321,6 +329,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return The value.
+        :rtype int
         """
         return self._stop_client_timeout_ms
 
@@ -328,6 +337,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return The value.
+        :rtype int
         """
         return self._stop_server_timeout_ms
 
@@ -335,6 +345,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return The number of child process count.
+        :rtype int
         """
         return self._child_process_count
 
@@ -342,13 +353,15 @@ class TcpServerConfig(object):
         """
         Getter
         :return The auto start boolean
+        :rtype bool
         """
         return self._auto_start
 
     def _get_onstop_call_client_stopsynch(self):
         """
         Getter
-        :return The auto start boolean
+        :return bool
+        :rtype bool
         """
         return self._onstop_callclient_stopsynch
 
@@ -356,6 +369,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return The listen address.
+        :rtype str
         """
         return self._listen_addr
 
@@ -363,6 +377,7 @@ class TcpServerConfig(object):
         """
         Getter.
         :return: A boolean.
+        :rtype bool
         """
         return self._ssl_enable
 
@@ -370,6 +385,7 @@ class TcpServerConfig(object):
         """
         Getter.
         :return: A string or None
+        :rtype None,str
         """
 
         return self._ssl_key_file
@@ -378,6 +394,7 @@ class TcpServerConfig(object):
         """
         Getter.
         :return: A string or None
+        :rtype None,str
         """
 
         return self._ssl_certificate_file
@@ -386,6 +403,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return Timeout in ms.
+        :rtype int
         """
         return self._socket_absolute_timeout_ms
 
@@ -393,6 +411,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return Timeout in ms.
+        :rtype int
         """
         return self._socket_relative_timeout_ms
 
@@ -400,6 +419,7 @@ class TcpServerConfig(object):
         """
         Getter
         :return Timeout in ms.
+        :rtype int
         """
         return self._socket_min_check_interval_ms
 
@@ -407,7 +427,7 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param ms: Timeout in ms.
-        :return Nothing.
+        :type ms: int
         """
 
         cms = ms
@@ -424,7 +444,7 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param ms: Timeout in ms.
-        :return Nothing.
+        :type ms: int
         """
 
         cms = ms
@@ -442,7 +462,7 @@ class TcpServerConfig(object):
         """
         Setter. Raise exception if a problem occurs.
         :param ms: Timeout in ms.
-        :return Nothing.
+        :type ms: int
         """
 
         cms = ms
@@ -503,7 +523,7 @@ class TcpServerConfig(object):
         """
         Setter for debug only.
         :param value: Value.
-        :return: Nothing.
+        :type value: int
         """
         self._debug_waitinssl_ms = value
 
@@ -511,6 +531,7 @@ class TcpServerConfig(object):
         """
         Getter for debug only.
         :return: Value.
+        :rtype int
         """
         return self._debug_waitinssl_ms
 

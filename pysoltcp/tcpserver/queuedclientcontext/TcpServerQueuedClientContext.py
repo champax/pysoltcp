@@ -41,11 +41,14 @@ class TcpServerQueuedClientContext(TcpServerClientContext):
     def __init__(self, tcp_server, client_id, client_socket, client_addr):
         """
         Constructor.
-        :param tcp_server: The tcp server.
-        :param client_id: The client id.
-        :param client_socket: The client socket.
-        :param client_addr: The client remote address.
-        :return Nothing
+        :param tcp_server: The tcpserver instance.
+        :type tcp_server: pysoltcp.tcpserver.TcpServer.TcpServer
+        :param client_id: an integer, which is the unique id of this client.
+        :type client_id: int
+        :param client_socket: The server socket.
+        :type client_socket: socket.socket
+        :param client_addr: The remote addr information.
+        :type client_addr: str
         """
 
         # Base - we provide two callback :
@@ -67,7 +70,7 @@ class TcpServerQueuedClientContext(TcpServerClientContext):
         """
         To string override
         :return: A string
-        :rtype string
+        :rtype str
         """
 
         return "q.recv.size={0}*{1}".format(
@@ -83,19 +86,21 @@ class TcpServerQueuedClientContext(TcpServerClientContext):
         """
         Called on socket receive. Method parse the protocol and put receive queue.
         :param binary_buffer: The binary buffer received.
-        :return Nothing.
+        :type binary_buffer: bytes
+
         """
 
         # Got something
         logger.debug("TcpServerQueuedClientContext : _on_receive called, binary_buffer=%s, self=%s", repr(binary_buffer), self)
 
         # Parse
-        self.__receive_current_buf = ProtocolParserTextDelimited.parse_protocol(self.__receive_current_buf, binary_buffer, self.__receive_queue, "\n")
+        self.__receive_current_buf = ProtocolParserTextDelimited.parse_protocol(self.__receive_current_buf, binary_buffer, self.__receive_queue, b"\n")
 
     def get_recv_queue_len(self):
         """
         Get receive queue len.
         :return An integer.
+        :rtype int
         """
         return self.__receive_queue.qsize()
 
@@ -107,8 +112,11 @@ class TcpServerQueuedClientContext(TcpServerClientContext):
         """
         Get a buffer from the receive queue.
         :param block: If True, will block.
+        :type block: bool
         :param timeout_sec: Timeout in seconds.
+        :type timeout_sec: int
         :return An item queued.
+        :rtype bytes,pysoltcp.tcpbase.SignaledBuffer.SignaledBuffer
         - If block is False, will return an item OR raise an Empty exception if no item.
         - If block is True AND timeOut=None, will wait forever for an item.
         - If block is True and timeout_sec>0, will wait for timeout_sec then raise Empty exception if no item.

@@ -54,7 +54,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def setUp(self):
         """
         Setup
-        :return Nothing.
+
         """
 
         SolBase.voodoo_init()
@@ -100,19 +100,19 @@ class TestBenchTcpPing(unittest.TestCase):
     def tearDown(self):
         """
         Setup (called on destroy)
-        :return Nothing.
+
         """
 
         # noinspection PyBroadException
         try:
             self._stop_multi_client()
-        except:
+        except Exception:
             pass
 
         # noinspection PyBroadException
         try:
             self._stop_server_and_check()
-        except:
+        except Exception:
             pass
 
         # Wait a bit
@@ -121,7 +121,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def _start_server_and_check(self):
         """
         Test
-        :return Nothing.
+
         """
         # Config
         server_config = TcpServerConfig()
@@ -154,7 +154,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def _stop_server_and_check(self):
         """
         Test
-        :return Nothing.
+
         """
         # Stop
         self.tcp_server.stop_server()
@@ -169,7 +169,7 @@ class TestBenchTcpPing(unittest.TestCase):
         """
         Test
         :param client_count: Client count.
-        :return Nothing.
+
         """
 
         # Client config
@@ -257,12 +257,12 @@ class TestBenchTcpPing(unittest.TestCase):
             if len(self.tcp_server._client_connected_hash) == client_count:
                 break
             logger.info("waiting for server : connected=%s, target=%s", len(self.tcp_server._client_connected_hash), client_count)
-            SolBase.sleep(self.checkTimeOutMs / 100)
+            SolBase.sleep(int(self.checkTimeOutMs / 100))
 
         logger.info("waiting for server : done : connected=%s, target=%s", len(self.tcp_server._client_connected_hash), client_count)
 
         # Check
-        self.assertEquals(len(self.tcp_server._client_connected_hash), client_count)
+        self.assertEqual(len(self.tcp_server._client_connected_hash), client_count)
 
         # --------------------------------
         # Done
@@ -272,7 +272,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def _stop_multi_client(self):
         """
         Test
-        :return Nothing.
+
         """
 
         if self.arTcpClient is None:
@@ -320,7 +320,7 @@ class TestBenchTcpPing(unittest.TestCase):
             logger.info("waiting for server : connected/target=%s/0", len(self.tcp_server._client_connected_hash))
 
             # Wait
-            SolBase.sleep(self.checkTimeOutMs / 100)
+            SolBase.sleep(int(self.checkTimeOutMs / 100))
 
         # Check
         logger.info("check for disconnection")
@@ -334,7 +334,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def _start_multi_client_checkallping_stop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Start
@@ -398,7 +398,7 @@ class TestBenchTcpPing(unittest.TestCase):
                 "Running : ko=%s:%s, sec=%s/%s, cli.ping=%s, svr.ping=%s, exp.pps=%.2f, "
                 "cli.pps=%.2f, svr.pps=%.2f, cli.aps=%.2f, svr.aps=%.2f",
                 client_ko, server_ko,
-                SolBase.datediff(dt) / 1000, self.runTimeMs / 1000,
+                int(SolBase.datediff(dt) / 1000), int(self.runTimeMs / 1000),
                 client_local_completed_ping, server_local_completed_ping,
                 self.expectedPps,
                 client_local_pps, server_local_pps,
@@ -413,8 +413,8 @@ class TestBenchTcpPing(unittest.TestCase):
         # Final check
         client_ko = PingTestTools.get_client_ko_count(True, self.clientMaxCount)
         server_ko = PingTestTools.get_server_ko_count(True, self.clientMaxCount)
-        self.assertEquals(client_ko, 0)
-        self.assertEquals(server_ko, 0)
+        self.assertEqual(client_ko, 0)
+        self.assertEqual(server_ko, 0)
 
         # Stop
         self._stop_multi_client()
@@ -427,7 +427,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli10_ping100(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.debug_log = False
@@ -437,7 +437,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli1000_ping10000(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self._internal_test(1000, 10000)
@@ -446,7 +446,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli2000_ping10000(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self._internal_test(2000, 10000)
@@ -455,7 +455,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli10000_ping10000(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self._internal_test(10000, 10000)
@@ -464,7 +464,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli40000_ping40000_run480000(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Raise timeout
@@ -478,7 +478,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli60000_ping60000_run720000(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Raise timeout
@@ -495,7 +495,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli10_ping100_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.debug_log = False
@@ -506,7 +506,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli1000_ping10000_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.testSsl = True
@@ -516,7 +516,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli2000_ping10000_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.testSsl = True
@@ -526,7 +526,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli10000_ping10000_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.testSsl = True
@@ -536,7 +536,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli40000_ping40000_run480000_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Raise timeout
@@ -551,7 +551,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli60000_ping60000_run720000_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Raise timeout
@@ -569,7 +569,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli10_ping100_proxy(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.debug_log = False
@@ -581,7 +581,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli1000_ping10000_proxy(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.testSsl = False
@@ -592,7 +592,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli2000_ping10000_proxy(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.testSsl = False
@@ -603,7 +603,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli10000_ping10000_proxy(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.testSsl = False
@@ -614,7 +614,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli40000_ping40000_run480000_proxy(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Raise timeout
@@ -630,7 +630,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli60000_ping60000_run720000_proxy(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Raise timeout
@@ -649,7 +649,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli10_ping100_proxy_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.debug_log = False
@@ -661,7 +661,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli1000_ping10000_proxy_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.testSsl = True
@@ -672,7 +672,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli2000_ping10000_proxy_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.testSsl = True
@@ -683,7 +683,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli10000_ping10000_proxy_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         self.testSsl = True
@@ -694,7 +694,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli40000_ping40000_run480000_proxy_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Raise timeout
@@ -710,7 +710,7 @@ class TestBenchTcpPing(unittest.TestCase):
     def test_bench_cli60000_ping60000_run720000_proxy_ssl(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Raise timeout

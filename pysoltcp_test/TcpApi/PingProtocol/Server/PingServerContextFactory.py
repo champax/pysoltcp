@@ -45,7 +45,7 @@ class PingServerContextFactory(TcpServerClientContextAbstractFactory):
         :param hello_timeout_ms: Timeout in millis.
         :param ping_interval_ms: Timeout in millis.
         :param ping_timeout_ms: Timeout in millis.
-        :return Nothing.
+
         """
         self._hello_timeout_ms = hello_timeout_ms
         self._ping_interval_ms = ping_interval_ms

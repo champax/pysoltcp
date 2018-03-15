@@ -58,7 +58,7 @@ class TestTcpServer(unittest.TestCase):
     def setUp(self):
         """
         Setup
-        :return Nothing.
+
         """
 
         SolBase.voodoo_init()
@@ -79,7 +79,7 @@ class TestTcpServer(unittest.TestCase):
     def tearDown(self):
         """
         Setup (called on destroy)
-        :return Nothing.
+
         """
 
         if not SolBase.get_master_process():
@@ -121,7 +121,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_svrstop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance
@@ -176,7 +176,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_svrstop_fork(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance
@@ -233,7 +233,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_clipinghipid_svrstop_fork(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instance
@@ -366,7 +366,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_cliconnect_svrstop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -437,11 +437,11 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if len(self.tcp_server._client_connected_hash) > 0:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(int(check_timeout / 100)))
             logger.info("server : wait connection : done")
 
             # Check
-            self.assertEquals(len(self.tcp_server._client_connected_hash), 1)
+            self.assertEqual(len(self.tcp_server._client_connected_hash), 1)
 
             # Stop
             logger.info("server : stopping")
@@ -458,7 +458,7 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if not self.tcp_client.is_connected:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
 
             # Check
             logger.info("client : check for disconnection")
@@ -476,7 +476,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_cliconnect_clistop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -549,11 +549,11 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if len(self.tcp_server._client_connected_hash) > 0:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
             logger.info("server : wait connection : done")
 
             # Check
-            self.assertEquals(len(self.tcp_server._client_connected_hash), 1)
+            self.assertEqual(len(self.tcp_server._client_connected_hash), 1)
 
             # Kill client
             self.tcp_client.disconnect()
@@ -572,7 +572,7 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if len(self.tcp_server._client_connected_hash) == 0:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
 
             # Check
             logger.info("server : check for disconnection")
@@ -596,7 +596,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_cliconnect_inloop_clistop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -672,11 +672,11 @@ class TestTcpServer(unittest.TestCase):
                 while SolBase.datediff(dt_start) < check_timeout:
                     if len(self.tcp_server._client_connected_hash) > 0:
                         break
-                    SolBase.sleep(check_timeout / 100)
+                    SolBase.sleep(int(check_timeout / 100))
                 logger.info("server : wait connection : done")
 
                 # Check
-                self.assertEquals(len(self.tcp_server._client_connected_hash), 1)
+                self.assertEqual(len(self.tcp_server._client_connected_hash), 1)
 
                 # Kill client
                 self.tcp_client.disconnect()
@@ -692,7 +692,7 @@ class TestTcpServer(unittest.TestCase):
                 while SolBase.datediff(dt_start) < check_timeout:
                     if len(self.tcp_server._client_connected_hash) == 0:
                         break
-                    SolBase.sleep(check_timeout / 100)
+                    SolBase.sleep(int(check_timeout / 100))
 
                 # Check
                 logger.info("server : check for disconnection")
@@ -714,7 +714,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_clisend_svrreply_svrstop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -787,36 +787,36 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if len(self.tcp_server._client_connected_hash) > 0:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
             logger.info("server : wait connection : done")
 
             # Check
-            self.assertEquals(len(self.tcp_server._client_connected_hash), 1)
+            self.assertEqual(len(self.tcp_server._client_connected_hash), 1)
 
             # ==================================
             # CHAT INIT
             # ==================================
 
             # Get the server client instance
-            tcp_server_client = self.tcp_server._client_connected_hash[self.tcp_server._client_connected_hash.keys()[0]]
+            tcp_server_client = self.tcp_server._client_connected_hash[list(self.tcp_server._client_connected_hash.keys())[0]]
 
             # ==================================
             # CHAT START
             # ==================================
 
             # Client  : send HI
-            self.assertTrue(self.tcp_client.send_text_to_socket("HI 999"))
+            self.assertTrue(self.tcp_client.send_unicode_to_socket("HI 999"))
 
             # Server : wait for receive, 5 sec timeout (will raise Empty exception on timeout)
             buf_recv = tcp_server_client.get_from_receive_queue(True, queue_timeout_sec)
-            self.assertEquals(buf_recv, "HI 999")
+            self.assertEqual(buf_recv, b"HI 999")
 
             # Server : reply
-            self.assertTrue(tcp_server_client.send_text_to_socket("OK 999"))
+            self.assertTrue(tcp_server_client.send_unicode_to_socket("OK 999"))
 
             # Client : wait for receive, 5 sec timeout (will raise Empty exception on timeout
             buf_recv = self.tcp_client.get_from_receive_queue(True, queue_timeout_sec)
-            self.assertEquals(buf_recv, "OK 999")
+            self.assertEqual(buf_recv, b"OK 999")
 
             # ==================================
             # CHAT END
@@ -837,7 +837,7 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if not self.tcp_client.is_connected:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
 
             # Check
             logger.info("client : check for disconnection")
@@ -856,7 +856,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_clisend_svrreply_svrstop_withsendsignaled(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -929,33 +929,33 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if len(self.tcp_server._client_connected_hash) > 0:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
             logger.info("server : wait connection : done")
 
             # Check
-            self.assertEquals(len(self.tcp_server._client_connected_hash), 1)
+            self.assertEqual(len(self.tcp_server._client_connected_hash), 1)
 
             # ==================================
             # CHAT INIT
             # ==================================
 
             # Get the server client instance
-            tcp_server_client = self.tcp_server._client_connected_hash[self.tcp_server._client_connected_hash.keys()[0]]
+            tcp_server_client = self.tcp_server._client_connected_hash[list(self.tcp_server._client_connected_hash.keys())[0]]
 
             # ==================================
             # CHAT START
             # ==================================
 
             # Client  : send HI
-            self.assertTrue(self.tcp_client.send_text_to_socket("HI 999"))
+            self.assertTrue(self.tcp_client.send_unicode_to_socket("HI 999"))
 
             # Server : wait for receive, 5 sec timeout (will raise Empty exception on timeout)
             buf_recv = tcp_server_client.get_from_receive_queue(True, queue_timeout_sec)
-            self.assertEquals(buf_recv, "HI 999")
+            self.assertEqual(buf_recv, b"HI 999")
 
             # Server : reply
             sb = SignaledBuffer()
-            sb.binary_buffer = "OK 999" + "\n"
+            sb.binary_buffer = b"OK 999" + b"\n"
             self.assertTrue(tcp_server_client.send_binary_to_socket_with_signal(sb))
 
             # Send MUST be signaled
@@ -964,7 +964,7 @@ class TestTcpServer(unittest.TestCase):
 
             # Client : wait for receive, 5 sec timeout (will raise Empty exception on timeout
             buf_recv = self.tcp_client.get_from_receive_queue(True, queue_timeout_sec)
-            self.assertEquals(buf_recv, "OK 999")
+            self.assertEqual(buf_recv, b"OK 999")
 
             # ==================================
             # CHAT END
@@ -985,7 +985,7 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if not self.tcp_client.is_connected:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
 
             # Check
             logger.info("client : check for disconnection")
@@ -1004,7 +1004,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_clisend_svrreply_loopsendrecv_x2_svrstop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -1077,18 +1077,18 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if len(self.tcp_server._client_connected_hash) > 0:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
             logger.info("server : wait connection : done")
 
             # Check
-            self.assertEquals(len(self.tcp_server._client_connected_hash), 1)
+            self.assertEqual(len(self.tcp_server._client_connected_hash), 1)
 
             # ==================================
             # CHAT INIT
             # ==================================
 
             # Get the server client instance
-            tcp_server_client = self.tcp_server._client_connected_hash[self.tcp_server._client_connected_hash.keys()[0]]
+            tcp_server_client = self.tcp_server._client_connected_hash[list(self.tcp_server._client_connected_hash.keys())[0]]
 
             # ==================================
             # CHAT START
@@ -1101,18 +1101,18 @@ class TestTcpServer(unittest.TestCase):
             dt_start = SolBase.datecurrent()
             while loop_cur < loop_count:
                 # Client  : send HI
-                self.assertTrue(self.tcp_client.send_text_to_socket("HI " + str(loop_cur)))
+                self.assertTrue(self.tcp_client.send_unicode_to_socket("HI " + str(loop_cur)))
 
                 # Server : wait for receive, 5 sec timeout (will raise Empty exception on timeout)
                 buf_recv = tcp_server_client.get_from_receive_queue(True, queue_timeout_sec)
-                self.assertEquals(buf_recv, "HI " + str(loop_cur))
+                self.assertEqual(buf_recv, SolBase.unicode_to_binary("HI " + str(loop_cur), "utf-8"))
 
                 # Server : reply
-                self.assertTrue(tcp_server_client.send_text_to_socket("OK " + str(loop_cur)))
+                self.assertTrue(tcp_server_client.send_unicode_to_socket("OK " + str(loop_cur)))
 
                 # Client : wait for receive, 5 sec timeout (will raise Empty exception on timeout
                 buf_recv = self.tcp_client.get_from_receive_queue(True, queue_timeout_sec)
-                self.assertEquals(buf_recv, "OK " + str(loop_cur))
+                self.assertEqual(buf_recv, SolBase.unicode_to_binary("OK " + str(loop_cur), "utf-8"))
 
                 loop_cur += 1
 
@@ -1144,7 +1144,7 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if not self.tcp_client.is_connected:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
 
             # Check
             logger.info("client : check for disconnection")
@@ -1163,7 +1163,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_clisend_svrreply_loopsendthenrecv_svrstop(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -1236,18 +1236,18 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if len(self.tcp_server._client_connected_hash) > 0:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
             logger.info("server : wait connection : done")
 
             # Check
-            self.assertEquals(len(self.tcp_server._client_connected_hash), 1)
+            self.assertEqual(len(self.tcp_server._client_connected_hash), 1)
 
             # ==================================
             # CHAT INIT
             # ==================================
 
             # Get the server client instance
-            tcp_server_client = self.tcp_server._client_connected_hash[self.tcp_server._client_connected_hash.keys()[0]]
+            tcp_server_client = self.tcp_server._client_connected_hash[list(self.tcp_server._client_connected_hash.keys())[0]]
 
             # ==================================
             # CHAT START
@@ -1260,7 +1260,7 @@ class TestTcpServer(unittest.TestCase):
             dt_start = SolBase.datecurrent()
             while loop_cur < loop_count:
                 # Client  : send HI in loop
-                self.assertTrue(self.tcp_client.send_text_to_socket("HI " + str(loop_cur)))
+                self.assertTrue(self.tcp_client.send_unicode_to_socket("HI " + str(loop_cur)))
                 loop_cur += 1
 
             logger.info("SendLoop : send done")
@@ -1308,7 +1308,7 @@ class TestTcpServer(unittest.TestCase):
             while loop_cur < loop_count:
                 # Server : wait for receive, 5 sec timeout (will raise Empty exception on timeout
                 buf_recv = tcp_server_client.get_from_receive_queue(True, queue_timeout_sec)
-                self.assertEquals(buf_recv, "HI " + str(loop_cur))
+                self.assertEqual(buf_recv, SolBase.unicode_to_binary("HI " + str(loop_cur)))
 
                 loop_cur += 1
 
@@ -1340,7 +1340,7 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if not self.tcp_client.is_connected:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
 
             # Check
             logger.info("client : check for disconnection")
@@ -1559,7 +1559,7 @@ class TestTcpServer(unittest.TestCase):
     def test_tcp_svrstart_cliconnect_clistop_sslhandshake_timeout(self):
         """
         Test
-        :return Nothing.
+
         """
 
         # Instances
@@ -1638,12 +1638,12 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if Meters.aig("tcp.server.ssl_handshake_timeout_count") == 1 and self.tcp_server._client_connected_hash == 0:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
             logger.info("server : wait for ssl timeout : done")
 
             # Check
-            self.assertEquals(Meters.aig("tcp.server.ssl_handshake_timeout_count"), 1)
-            self.assertEquals(len(self.tcp_server._client_connected_hash), 0)
+            self.assertEqual(Meters.aig("tcp.server.ssl_handshake_timeout_count"), 1)
+            self.assertEqual(len(self.tcp_server._client_connected_hash), 0)
 
             # Client must be disconnect
             self.assertFalse(self.tcp_client.is_connected)
@@ -1658,7 +1658,7 @@ class TestTcpServer(unittest.TestCase):
             while SolBase.datediff(dt_start) < check_timeout:
                 if len(self.tcp_server._client_connected_hash) == 0:
                     break
-                SolBase.sleep(check_timeout / 100)
+                SolBase.sleep(int(check_timeout / 100))
 
             # Check
             logger.info("server : check for disconnection")

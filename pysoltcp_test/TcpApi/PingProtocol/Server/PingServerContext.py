@@ -23,15 +23,15 @@
 """
 
 import logging
-# Logger
-from Queue import Empty
-from random import randint
 from threading import RLock
 
 import gevent
 import os
+# noinspection PyProtectedMember
+from gevent.queue import Empty
 from pysolbase.SolBase import SolBase
 from pysolmeters.Meters import Meters
+from random import randint
 
 from pysoltcp.tcpserver.queuedclientcontext.TcpServerQueuedClientContext import TcpServerQueuedClientContext
 
@@ -51,7 +51,7 @@ class PingServerContext(TcpServerQueuedClientContext):
         :param client_id: The client id.
         :param client_socket: The client socket.
         :param client_addr: The client address.
-        :return Nothing.
+
         """
 
         # Base - we provide two callback :
@@ -152,13 +152,13 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _schedule_client_hello_timeout(self):
         """
         Schedule a ping timeout
-        :return Nothing.
+
         """
 
         with self._protocolLock:
             # Check
             if self._helloTimeOutGreenlet:
-                logger.warn("_helloTimeOutGreenlet is not None, killing")
+                logger.warning("_helloTimeOutGreenlet is not None, killing")
                 Meters.aii("ping.server.scheduleClientHelloTimeOutError")
                 self._unschedule_client_hello_timeout()
                 # Go
@@ -167,7 +167,7 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _unschedule_client_hello_timeout(self):
         """
         Unschedule a ping
-        :return Nothing.
+
         """
         with self._protocolLock:
             if self._helloTimeOutGreenlet:
@@ -181,12 +181,12 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _schedule_server_ping(self, randomize_delay=False):
         """
         Schedule a ping
-        :return Nothing.
+
         """
         with self._protocolLock:
             # Check
             if self._pingGreenlet:
-                logger.warn("_ping_greenlet is not None, killing")
+                logger.warning("_ping_greenlet is not None, killing")
                 Meters.aii("ping.server.scheduleServerPingError")
                 self._unschedule_server_ping()
 
@@ -203,7 +203,7 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _unschedule_server_ping(self):
         """
         Unschedule a ping
-        :return Nothing.
+
         """
         with self._protocolLock:
             if self._pingGreenlet:
@@ -217,13 +217,13 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _schedule_server_ping_client_timeout(self):
         """
         Schedule a ping timeout
-        :return Nothing.
+
         """
 
         with self._protocolLock:
             # Check
             if self._pingTimeOutGreenlet:
-                logger.warn("_ping_timeout_greenlet is not None, killing")
+                logger.warning("_ping_timeout_greenlet is not None, killing")
                 Meters.aii("ping.server.scheduleServerPingTimeOutError")
                 self._unschedule_server_ping_client_timeout()
                 # Go
@@ -232,7 +232,7 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _unschedule_server_ping_client_timeout(self):
         """
         Unschedule a ping
-        :return Nothing.
+
         """
         with self._protocolLock:
             if self._pingTimeOutGreenlet:
@@ -247,7 +247,7 @@ class PingServerContext(TcpServerQueuedClientContext):
         """
         Callback called upon server receive.
         :param binary_buffer: Received buffer.
-        :return Nothing.
+
         """
 
         # Received something...
@@ -262,7 +262,7 @@ class PingServerContext(TcpServerQueuedClientContext):
                 # Try
                 item = self.get_from_receive_queue()
                 # Process
-                self._process_item(item)
+                self._process_item(SolBase.binary_to_unicode(item, "utf-8"))
             except Empty:
                 break
 
@@ -274,7 +274,8 @@ class PingServerContext(TcpServerQueuedClientContext):
         """
         Process a received item
         :param item: Item to process.
-        :return Nothing.
+        :type item: str
+
         """
 
         # PROTOCOL             => Any send failed on socket : fatal.
@@ -303,7 +304,7 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _protocol_invalid(self):
         """
         Invalid procotol
-        :return Nothing.
+
         """
         Meters.aii("ping.server.invalid_protocol")
 
@@ -314,7 +315,7 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _protocol_client_hello_received(self):
         """
         Must send a hello
-        :return Nothing.
+
         """
         with self._protocolLock:
             # Un-schedule hello timeout
@@ -327,7 +328,7 @@ class PingServerContext(TcpServerQueuedClientContext):
             Meters.aii("ping.server.delayClientConnectToClientHello", SolBase.datediff(self.dtClientConnect))
 
             # Send a reply
-            b = self.send_text_to_socket("C.HI.REPLY PID={0}".format(os.getpid()))
+            b = self.send_unicode_to_socket("C.HI.REPLY PID={0}".format(os.getpid()))
             if not b:
                 # Stat
                 logger.error("send failed, fatal, disconnecting")
@@ -345,7 +346,7 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _protocol_context_client_hello_timeout(self):
         """
         Hello timeout
-        :return Nothing.
+
         """
 
         with self._protocolLock:
@@ -374,7 +375,7 @@ class PingServerContext(TcpServerQueuedClientContext):
             Meters.aii("ping.server.clientPingReceive")
 
             # Reply
-            b = self.send_text_to_socket("C.PING.REPLY")
+            b = self.send_unicode_to_socket("C.PING.REPLY")
             if not b:
                 # Stat
                 logger.error("send failed, fatal, disconnecting")
@@ -392,7 +393,7 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _protocol_server_ping_send(self):
         """
         Must send a client ping
-        :return Nothing.
+
         """
         with self._protocolLock:
             # Reset (we are called by it)
@@ -405,7 +406,7 @@ class PingServerContext(TcpServerQueuedClientContext):
             self.dtLastPingSend = SolBase.datecurrent()
 
             # Send a ping
-            b = self.send_text_to_socket("S.PING")
+            b = self.send_unicode_to_socket("S.PING")
             if not b:
                 # Stat
                 logger.error("send failed, fatal, disconnecting")
@@ -419,7 +420,7 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _protocol_server_ping_client_reply(self):
         """
         A client ping has been replied
-        :return Nothing.
+
         """
 
         with self._protocolLock:
@@ -443,11 +444,11 @@ class PingServerContext(TcpServerQueuedClientContext):
     def _protocol_server_ping_client_timeout(self):
         """
         Called when a ping has time-out (ie no reply from server)
-        :return Nothing.
+
         """
 
         with self._protocolLock:
-            logger.warn("ping timeout, rescheduling ping")
+            logger.warning("ping timeout, rescheduling ping")
 
             # Reset (we are called by it)
             self._pingTimeOutGreenlet = None
