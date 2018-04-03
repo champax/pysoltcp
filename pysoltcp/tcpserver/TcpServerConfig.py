@@ -104,11 +104,8 @@ class TcpServerConfig(object):
         :param listen_addr: The listen address.
         :type listen_addr: str
         """
-        if not SolBase.is_string_not_empty(listen_addr):
-            logger.error("not a string or empty, class=%s", SolBase.get_classname(listen_addr))
-            raise Exception("not a string or empty")
-        else:
-            self._listen_addr = listen_addr
+
+        self._listen_addr = listen_addr
 
     def _set_listen_port(self, listen_port):
         """
@@ -117,9 +114,7 @@ class TcpServerConfig(object):
         :type listen_port: int
         """
 
-        listen_port = listen_port
-        if SolBase.is_string(listen_port):
-            listen_port = SolBase.to_int(listen_port)
+        listen_port = SolBase.to_int(listen_port)
 
         if not SolBase.is_int(listen_port):
             logger.error("not a int, class=%s", SolBase.get_classname(listen_port))
@@ -136,11 +131,7 @@ class TcpServerConfig(object):
         :param ms: Time out in ms.
         :type ms: int
         """
-
-        cms = ms
-
-        if SolBase.is_string(cms):
-            cms = SolBase.to_int(cms)
+        cms = SolBase.to_int(ms)
 
         if not SolBase.is_int(cms):
             logger.error("not a int, class=%s", SolBase.get_classname(cms))
@@ -155,10 +146,7 @@ class TcpServerConfig(object):
         :type ms: int
         """
 
-        cms = ms
-
-        if SolBase.is_string(cms):
-            cms = SolBase.to_int(cms)
+        cms = SolBase.to_int(ms)
 
         if not SolBase.is_int(cms):
             logger.error("not a int, class=%s", SolBase.get_classname(cms))
@@ -173,10 +161,7 @@ class TcpServerConfig(object):
         :type ms: int
         """
 
-        cms = ms
-        if SolBase.is_string(cms):
-            cms = SolBase.to_int(cms)
-
+        cms = SolBase.to_int(ms)
         if not SolBase.is_int(cms):
             logger.error("not a int, class=%s", SolBase.get_classname(cms))
             raise Exception("not a int")
@@ -190,10 +175,7 @@ class TcpServerConfig(object):
         :type cpc: int
         """
 
-        child_process_count = cpc
-
-        if SolBase.is_string(child_process_count):
-            child_process_count = SolBase.to_int(child_process_count)
+        child_process_count = SolBase.to_int(cpc)
 
         if not SolBase.is_int(child_process_count):
             logger.error("not a int, class=%s", SolBase.get_classname(child_process_count))
@@ -211,9 +193,7 @@ class TcpServerConfig(object):
         :type b: bool
         """
 
-        mb = b
-        if SolBase.is_string(mb):
-            mb = SolBase.to_bool(mb)
+        mb = SolBase.to_bool(b)
 
         if not SolBase.is_bool(mb):
             logger.error("not a boolean, class=%s", SolBase.get_classname(mb))
@@ -228,9 +208,7 @@ class TcpServerConfig(object):
         :type b: bool
         """
 
-        mb = b
-        if SolBase.is_string(mb):
-            mb = SolBase.to_bool(mb)
+        mb = SolBase.to_bool(b)
 
         if not SolBase.is_bool(mb):
             logger.error("not a boolean, class=%s", SolBase.get_classname(mb))
@@ -245,9 +223,7 @@ class TcpServerConfig(object):
         :type b: bool
         """
 
-        is_enable = b
-        if SolBase.is_string(is_enable):
-            is_enable = SolBase.to_bool(is_enable)
+        is_enable = SolBase.to_bool(b)
 
         if not SolBase.is_bool(is_enable):
             logger.error("not a boolean, class=%s", SolBase.get_classname(is_enable))
@@ -264,13 +240,9 @@ class TcpServerConfig(object):
         :rtype bool
         """
         # Check
-        if key_file is None or (SolBase.is_string(key_file) and len(key_file) == 0):
+        if key_file is None or len(key_file) == 0:
             self._ssl_key_file = ""
             return
-
-        if not SolBase.is_string_not_empty(key_file):
-            logger.warning("not a string, class=%s", SolBase.get_classname(key_file))
-            raise Exception("not a string")
 
         if not FileUtility.is_file_exist(key_file):
             logger.warning("key_file do not exist or is not accessible, key_file=%s", key_file)
@@ -286,13 +258,9 @@ class TcpServerConfig(object):
         """
 
         # Check
-        if cert_file is None or (SolBase.is_string(cert_file) and len(cert_file) == 0):
+        if cert_file is None or len(cert_file) == 0:
             self._ssl_certificate_file = ""
             return
-
-        if not SolBase.is_string_not_empty(cert_file):
-            logger.error("not a string, class=%s", SolBase.get_classname(cert_file))
-            raise Exception("not a string")
 
         # Check
         if not FileUtility.is_file_exist(cert_file):
@@ -430,9 +398,7 @@ class TcpServerConfig(object):
         :type ms: int
         """
 
-        cms = ms
-        if SolBase.is_string(cms):
-            cms = SolBase.to_int(cms)
+        cms = SolBase.to_int(ms)
 
         if not SolBase.is_int(cms):
             logger.error("not a int, class=%s", SolBase.get_classname(cms))
@@ -447,10 +413,7 @@ class TcpServerConfig(object):
         :type ms: int
         """
 
-        cms = ms
-
-        if SolBase.is_string(cms):
-            cms = SolBase.to_int(cms)
+        cms = SolBase.to_int(ms)
 
         if not SolBase.is_int(cms):
             logger.error("not a int, class=%s", SolBase.get_classname(cms))
@@ -465,9 +428,7 @@ class TcpServerConfig(object):
         :type ms: int
         """
 
-        cms = ms
-        if SolBase.is_string(cms):
-            cms = SolBase.to_int(cms)
+        cms = SolBase.to_int(ms)
 
         if not SolBase.is_int(cms):
             logger.error("not a int, class=%s", SolBase.get_classname(cms))

@@ -31,13 +31,6 @@ from gevent import GreenletExit
 
 from pysoltcp import PY2
 
-if PY2:
-    # noinspection PyProtectedMember
-    from gevent._sslgte279 import SSLSocket
-else:
-    # noinspection PyProtectedMember
-    from gevent._ssl3 import SSLSocket
-
 from gevent.queue import Queue
 from pysolbase.SolBase import SolBase
 from pysolmeters.AtomicInt import AtomicIntSafe
@@ -45,6 +38,14 @@ from pysolmeters.AtomicInt import AtomicIntSafe
 from pysoltcp.tcpbase.ProtocolParserTextDelimited import ProtocolParserTextDelimited
 from pysoltcp.tcpbase.TcpSocketManager import TcpSocketManager
 from pysoltcp.tcpclient.TcpClientConfig import TcpClientConfig
+
+if PY2:
+    # noinspection PyProtectedMember
+    from gevent._sslgte279 import SSLSocket
+else:
+    # noinspection PyProtectedMember
+    from gevent._ssl3 import SSLSocket
+
 
 SolBase.voodoo_init()
 

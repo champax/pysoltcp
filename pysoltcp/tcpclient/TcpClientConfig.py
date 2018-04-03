@@ -69,11 +69,8 @@ class TcpClientConfig(object):
         :param target_addr: The target address.
         :type target_addr: str
         """
-        if not SolBase.is_string_not_empty(target_addr):
-            logger.error("TcpClientConfig : _setTargetAddress : not a string or empty, class=%s", SolBase.get_classname(target_addr))
-            raise Exception("TcpClientConfig : _setTargetAddress : not a string or empty")
-        else:
-            self._target_addr = target_addr
+
+        self._target_addr = target_addr
 
     def _get_targetaddr(self):
         """
@@ -160,12 +157,8 @@ class TcpClientConfig(object):
         :param proxy_addr: The proxy target address.
         :type proxy_addr: str
         """
-        if not SolBase.is_string_not_empty(proxy_addr):
-            logger.error("TcpClientConfig : _setProxyAddress : not a string or empty, class=%s",
-                         SolBase.get_classname(proxy_addr))
-            raise Exception("TcpClientConfig : _setProxyAddress : not a string or empty")
-        else:
-            self._proxy_addr = proxy_addr
+
+        self._proxy_addr = proxy_addr
 
     def _get_proxy_addr(self):
         """

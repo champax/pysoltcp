@@ -45,20 +45,11 @@ class PingServerContextFactory(TcpServerClientContextAbstractFactory):
         :param hello_timeout_ms: Timeout in millis.
         :param ping_interval_ms: Timeout in millis.
         :param ping_timeout_ms: Timeout in millis.
-
         """
-        self._hello_timeout_ms = hello_timeout_ms
-        self._ping_interval_ms = ping_interval_ms
-        self._ping_timeout_ms = ping_timeout_ms
 
-        if SolBase.is_string(self._hello_timeout_ms):
-            self._hello_timeout_ms = SolBase.to_int(self._hello_timeout_ms)
-
-        if SolBase.is_string(self._ping_interval_ms):
-            self._ping_interval_ms = SolBase.to_int(self._ping_interval_ms)
-
-        if SolBase.is_string(self._ping_timeout_ms):
-            self._ping_timeout_ms = SolBase.to_int(self._ping_timeout_ms)
+        self._hello_timeout_ms = SolBase.to_int(hello_timeout_ms)
+        self._ping_interval_ms = SolBase.to_int(ping_interval_ms)
+        self._ping_timeout_ms = SolBase.to_int(ping_timeout_ms)
 
         logger.info("_hello_timeout_ms=%s, type=%s", self._hello_timeout_ms, SolBase.get_classname(self._hello_timeout_ms))
         logger.info("_ping_interval_ms=%s, type=%s", self._ping_interval_ms, SolBase.get_classname(self._ping_interval_ms))
