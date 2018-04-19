@@ -302,7 +302,7 @@ class TcpServerClientContext(TcpSocketManager):
 
             # Disconnect
             # Close the socket in this case (should not cover mantis 1173)
-            TcpSocketManager.safe_close_socket(self.current_socket)
+            SolBase.safe_close_socket(self.current_socket)
             self.current_socket = None
 
             # Greenlet reset after is_connected=False (will help to exit itself)

@@ -469,7 +469,7 @@ class TcpServer(object):
             Meters.aii("tcp.server.clientRegisterException")
 
             # Close the socket in this case
-            TcpSocketManager.safe_close_socket(socket)
+            SolBase.safe_close_socket(socket)
             return None
 
     # =====================================================
