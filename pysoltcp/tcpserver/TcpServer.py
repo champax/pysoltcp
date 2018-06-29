@@ -35,7 +35,6 @@ from pysolbase.SolBase import SolBase
 from pysolmeters.AtomicInt import AtomicIntSafe
 from pysolmeters.Meters import Meters
 
-from pysoltcp.tcpbase.TcpSocketManager import TcpSocketManager
 from pysoltcp.tcpserver.TcpServerConfig import TcpServerConfig
 
 SolBase.voodoo_init()
@@ -321,6 +320,7 @@ class TcpServer(object):
             # If we have child, signal them now
             for pid in self._fork_pid_list:
                 logger.info("_stop_server : Sending SIGTERM to pid=%s", pid)
+                # noinspection PyUnresolvedReferences
                 os.kill(pid, signal.SIGTERM)
 
             # Wait for exit
