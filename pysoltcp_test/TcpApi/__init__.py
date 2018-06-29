@@ -21,3 +21,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 # ===============================================================================
 """
+from pysolbase.FileUtility import FileUtility
+
+
+def is_dante_detected():
+    """
+    Return true if dante is detected.
+    :return: bool
+    :rtype bool
+    """
+
+    return FileUtility.is_file_exist("/etc/danted.conf")

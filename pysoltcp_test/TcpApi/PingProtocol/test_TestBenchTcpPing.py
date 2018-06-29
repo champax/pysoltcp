@@ -26,12 +26,14 @@ import logging
 # Imports
 import unittest
 
+from pysolbase.FileUtility import FileUtility
 from pysolbase.SolBase import SolBase
 from pysolmeters.Meters import Meters
 
 from pysoltcp.tcpclient.TcpClientConfig import TcpClientConfig
 from pysoltcp.tcpserver.TcpServer import TcpServer
 from pysoltcp.tcpserver.TcpServerConfig import TcpServerConfig
+from pysoltcp_test.TcpApi import is_dante_detected
 from pysoltcp_test.TcpApi.PingProtocol.Client.PingSimpleClient import PingSimpleClient
 from pysoltcp_test.TcpApi.PingProtocol.PingTestTools import PingTestTools
 from pysoltcp_test.TcpApi.PingProtocol.Server.PingServerContextFactory import PingServerContextFactory
@@ -565,7 +567,7 @@ class TestBenchTcpPing(unittest.TestCase):
     # BENCH proxy
     # =================================
 
-    # @unittest.skip("gevent 1.1.1 zzzzz")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli10_ping100_proxy(self):
         """
         Test
@@ -578,6 +580,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(10, 100)
 
     @unittest.skip("Medium aggressive benchmark. Requires 2 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli1000_ping10000_proxy(self):
         """
         Test
@@ -589,6 +592,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(1000, 10000)
 
     @unittest.skip("Medium aggressive benchmark. Requires 2 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli2000_ping10000_proxy(self):
         """
         Test
@@ -600,6 +604,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(2000, 10000)
 
     @unittest.skip("Medium aggressive benchmark. Requires 2 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli10000_ping10000_proxy(self):
         """
         Test
@@ -611,6 +616,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(10000, 10000)
 
     @unittest.skip("Highly aggressive benchmark. Requires 3 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli40000_ping40000_run480000_proxy(self):
         """
         Test
@@ -627,6 +633,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(10000 * 4, 10000 * 4, 120000 * 4)
 
     @unittest.skip("Extreme aggressive benchmark. Requires 4 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli60000_ping60000_run720000_proxy(self):
         """
         Test
@@ -645,7 +652,7 @@ class TestBenchTcpPing(unittest.TestCase):
     # BENCH proxy + ssl
     # =================================
 
-    # @unittest.skip("gevent 1.1.1 zzzzz")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli10_ping100_proxy_ssl(self):
         """
         Test
@@ -658,6 +665,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(10, 100)
 
     @unittest.skip("Medium aggressive benchmark. Requires 2 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli1000_ping10000_proxy_ssl(self):
         """
         Test
@@ -669,6 +677,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(1000, 10000)
 
     @unittest.skip("Medium aggressive benchmark. Requires 2 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli2000_ping10000_proxy_ssl(self):
         """
         Test
@@ -680,6 +689,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(2000, 10000)
 
     @unittest.skip("Medium aggressive benchmark. Requires 2 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli10000_ping10000_proxy_ssl(self):
         """
         Test
@@ -691,6 +701,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(10000, 10000)
 
     @unittest.skip("Highly aggressive benchmark. Requires 3 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli40000_ping40000_run480000_proxy_ssl(self):
         """
         Test
@@ -707,6 +718,7 @@ class TestBenchTcpPing(unittest.TestCase):
         self._internal_test(10000 * 4, 10000 * 4, 120000 * 4)
 
     @unittest.skip("Extreme aggressive benchmark. Requires 4 GB free memory, Tuned TCP stack, Tuned OS.")
+    @unittest.skipIf(is_dante_detected() == False, "Need dante")
     def test_bench_cli60000_ping60000_run720000_proxy_ssl(self):
         """
         Test
