@@ -37,6 +37,7 @@ from pysoltcp.tcpclient.TcpSimpleClient import TcpSimpleClient
 from pysoltcp.tcpserver.TcpServer import TcpServer
 from pysoltcp.tcpserver.TcpServerConfig import TcpServerConfig
 from pysoltcp.tcpserver.queuedclientcontext.TcpServerQueuedClientContextFactory import TcpServerQueuedClientContextFactory
+from pysoltcp_test import ENABLE_SSL
 from pysoltcp_test.TcpApi import is_dante_detected
 from pysoltcp_test.TcpApi.PingProtocol.Client.PingSimpleClient import PingSimpleClient
 from pysoltcp_test.TcpApi.PingProtocol.Server.PingServerContextFactory import PingServerContextFactory
@@ -1360,6 +1361,7 @@ class TestTcpServer(unittest.TestCase):
     # ssl
     # ====================================
 
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_cliconnect_clistop_ssl(self):
         """
         Test.
@@ -1371,6 +1373,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_ssl)
         self.assertFalse(self.test_proxy)
 
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_cliconnect_svrstop_ssl(self):
         """
         Test.
@@ -1382,7 +1385,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_ssl)
         self.assertFalse(self.test_proxy)
 
-    # @unittest.skip("gevent 1.1.1 zzzzz")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_clisend_svrreply_loopsendrecv_x2_svrstop_ssl(self):
         """
         Test.
@@ -1394,7 +1397,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_ssl)
         self.assertFalse(self.test_proxy)
 
-    # @unittest.skip("gevent 1.1.1 zzzzz")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_clisend_svrreply_loopsendthenrecv_svrstop_ssl(self):
         """
         Test.
@@ -1406,7 +1409,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_ssl)
         self.assertFalse(self.test_proxy)
 
-    # @unittest.skip("gevent 1.1.1 zzzzz")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_clisend_svrreply_svrstop_ssl(self):
         """
         Test.
@@ -1418,6 +1421,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_ssl)
         self.assertFalse(self.test_proxy)
 
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_svrstop_ssl(self):
         """
         Test.
@@ -1498,6 +1502,7 @@ class TestTcpServer(unittest.TestCase):
     # ====================================
 
     @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_cliconnect_clistop_ssl_proxy(self):
         """
         Test.
@@ -1510,6 +1515,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_proxy)
 
     @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_cliconnect_svrstop_ssl_proxy(self):
         """
         Test.
@@ -1522,6 +1528,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_proxy)
 
     @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_clisend_svrreply_loopsendrecv_x2_svrstop_ssl_proxy(self):
         """
         Test.
@@ -1534,6 +1541,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_proxy)
 
     @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_clisend_svrreply_loopsendthenrecv_svrstop_ssl_proxy(self):
         """
         Test.
@@ -1546,6 +1554,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_proxy)
 
     @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_clisend_svrreply_svrstop_ssl_proxy(self):
         """
         Test.
@@ -1561,6 +1570,7 @@ class TestTcpServer(unittest.TestCase):
     # ssl HANDSHAKE TIMEOUT
     # ==============================
 
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_cliconnect_clistop_sslhandshake_timeout(self):
         """
         Test

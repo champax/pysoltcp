@@ -21,3 +21,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 # ===============================================================================
 """
+
+# Gevent 1.3 : rewritten do_handshake / cert file related stuff, will see later
+# Disengaging support for TCP SSL.
+ENABLE_SSL = False

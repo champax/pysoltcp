@@ -32,6 +32,7 @@ from pysolmeters.Meters import Meters
 from pysoltcp.tcpclient.TcpClientConfig import TcpClientConfig
 from pysoltcp.tcpserver.TcpServer import TcpServer
 from pysoltcp.tcpserver.TcpServerConfig import TcpServerConfig
+from pysoltcp_test import ENABLE_SSL
 from pysoltcp_test.TcpApi.PingProtocol.Client.PingSimpleClient import PingSimpleClient
 from pysoltcp_test.TcpApi.PingProtocol.PingTestTools import PingTestTools
 from pysoltcp_test.TcpApi.PingProtocol.Server.PingServerContextFactory import PingServerContextFactory
@@ -567,7 +568,7 @@ class TestTcpPing(unittest.TestCase):
     # TEST : CLIENT STOP/START
     # =================================
 
-    # @unittest.skip("gevent 1.1.1 zzzzz")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svr_start_cli_connect_ssl(self):
         """
         Test
@@ -603,7 +604,7 @@ class TestTcpPing(unittest.TestCase):
     # TEST : CLIENT AND SERVER PING LOOP
     # =================================
 
-    # @unittest.skip("gevent 1.1.1 zzzzz")
+    @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svr_start_cli_connectallpingcheck_ssl(self):
         """
         Test

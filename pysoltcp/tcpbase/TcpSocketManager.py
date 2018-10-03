@@ -559,6 +559,10 @@ class TcpSocketManager(object):
                             logger.warning("DEBUG : forcing a wait for SSL handshake timeout, done, self=%s", self)
 
                         # Do the handshake
+                        # TODO : gevent 1.3 : This is now broken due to underlying _sslobj None. To be checked. SSL support current disable.
+                        raise Exception("SSL Support currently disabled")
+
+                        # noinspection PyUnreachableCode
                         self.current_socket.do_handshake()
 
                         # Done, cancel timeout
