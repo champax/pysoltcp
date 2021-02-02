@@ -59,7 +59,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
 
         # Init
         self.tcp_server = None
-        self.tcpClient = None
+        self.tcp_client = None
 
         # Certificate path
         self.certificatesPath = Utility.generate_server_keys()
@@ -83,8 +83,8 @@ class TestTcpServerLifeTime(unittest.TestCase):
             self.fail("Exception on stop_server, ex=" + SolBase.extostr(e))
 
         try:
-            if self.tcpClient:
-                self.tcpClient.disconnect()
+            if self.tcp_client:
+                self.tcp_client.disconnect()
         except Exception as e:
             self.fail("Exception on disconnect, ex=" + SolBase.extostr(e))
 
@@ -94,7 +94,8 @@ class TestTcpServerLifeTime(unittest.TestCase):
         """
         Start server and client.
         :param server_config: Server config.
-        :return: nothing.
+        :return: tuple pysoltcp.tcpserver.TcpServer.TcpServer,pysoltcp.tcp_client.TcpSimpleClient.TcpSimpleClient
+        :rtype tuple
         """
 
         # Allocate
@@ -117,20 +118,20 @@ class TestTcpServerLifeTime(unittest.TestCase):
         client_config.debug_log = True
 
         # Client
-        self.tcpClient = TcpSimpleClient(client_config)
+        self.tcp_client = TcpSimpleClient(client_config)
 
         # Check
-        self.assertTrue(self.tcpClient.current_socket is None)
-        self.assertTrue(not self.tcpClient.is_connected)
+        self.assertTrue(self.tcp_client.current_socket is None)
+        self.assertTrue(not self.tcp_client.is_connected)
 
         # Connect
         logger.info("Starting connect()")
-        self.assertTrue(self.tcpClient.connect())
+        self.assertTrue(self.tcp_client.connect())
         logger.info("Starting connect() : done")
 
         # Check client
-        self.assertIsNotNone(self.tcpClient.current_socket)
-        self.assertTrue(self.tcpClient.is_connected)
+        self.assertIsNotNone(self.tcp_client.current_socket)
+        self.assertTrue(self.tcp_client.is_connected)
 
         # Wait for server
         logger.info("TestLog : server : wait connection")
@@ -146,6 +147,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
 
         # Ok
         logger.info("Started and connected, effectiveMs=%s", self.tcp_server.get_effective_controlinterval_ms())
+        return self.tcp_server, self.tcp_client
 
     def _waitforserver_disconnection(self, timeout_ms):
         """
@@ -156,14 +158,14 @@ class TestTcpServerLifeTime(unittest.TestCase):
         logger.info("server : wait for disconnection")
         dt_start = SolBase.datecurrent()
         while SolBase.datediff(dt_start) < timeout_ms:
-            if len(self.tcp_server._client_connected_hash) == 0 and self.tcpClient.current_socket is None:
+            if len(self.tcp_server._client_connected_hash) == 0 and self.tcp_client.current_socket is None:
                 break
             SolBase.sleep(timeout_ms / 1000)
         logger.info("server : wait for disconnection : done, ms=%s", SolBase.datediff(dt_start))
 
         # Check
         self.assertEqual(len(self.tcp_server._client_connected_hash), 0)
-        self.assertIsNone(self.tcpClient.current_socket)
+        self.assertIsNone(self.tcp_client.current_socket)
 
     def test_server_effective_ms(self):
         """
@@ -173,7 +175,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
 
         # Instances
         self.tcp_server = None
-        self.tcpClient = None
+        self.tcp_client = None
 
         # Config
         server_config = TcpServerConfig()
@@ -329,7 +331,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
 
         # Instances
         self.tcp_server = None
-        self.tcpClient = None
+        self.tcp_client = None
 
         try:
             # Config
@@ -341,29 +343,29 @@ class TestTcpServerLifeTime(unittest.TestCase):
             server_config.socket_min_checkinterval_ms = 0
 
             # Start
-            self._start_all(server_config)
+            self.tcp_server, self.tcp_client = self._start_all(server_config)
 
             # Client is connected
             self._waitforserver_disconnection((self.tcp_server.get_effective_controlinterval_ms() * 2) + 2000)
 
             # Check client
-            self.assertTrue(self.tcpClient.current_socket is None)
-            self.assertFalse(self.tcpClient.is_connected)
+            self.assertTrue(self.tcp_client.current_socket is None)
+            self.assertFalse(self.tcp_client.is_connected)
 
             # Reset client
-            self.tcpClient = None
+            self.tcp_client = None
 
             # Stop server
             self.tcp_server.stop_server()
 
             # Reset
             self.tcp_server = None
-            self.tcpClient = None
+            self.tcp_client = None
         finally:
             if self.tcp_server:
                 self.tcp_server.stop_server()
-            if self.tcpClient:
-                self.tcpClient.disconnect()
+            if self.tcp_client:
+                self.tcp_client.disconnect()
 
     def test_absolute_timeout_priortorelative(self):
         """
@@ -373,7 +375,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
 
         # Instances
         self.tcp_server = None
-        self.tcpClient = None
+        self.tcp_client = None
 
         try:
             # Config
@@ -385,29 +387,29 @@ class TestTcpServerLifeTime(unittest.TestCase):
             server_config.socket_min_checkinterval_ms = 0
 
             # Start
-            self._start_all(server_config)
+            self.tcp_server, self.tcp_client = self._start_all(server_config)
 
             # Client is connected
             self._waitforserver_disconnection((self.tcp_server.get_effective_controlinterval_ms() * 2) + 2000)
 
             # Check client
-            self.assertTrue(self.tcpClient.current_socket is None)
-            self.assertFalse(self.tcpClient.is_connected)
+            self.assertTrue(self.tcp_client.current_socket is None)
+            self.assertFalse(self.tcp_client.is_connected)
 
             # Reset client
-            self.tcpClient = None
+            self.tcp_client = None
 
             # Stop server
             self.tcp_server.stop_server()
 
             # Reset
             self.tcp_server = None
-            self.tcpClient = None
+            self.tcp_client = None
         finally:
             if self.tcp_server:
                 self.tcp_server.stop_server()
-            if self.tcpClient:
-                self.tcpClient.disconnect()
+            if self.tcp_client:
+                self.tcp_client.disconnect()
 
     def test_relative_timeout(self):
         """
@@ -417,7 +419,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
 
         # Instances
         self.tcp_server = None
-        self.tcpClient = None
+        self.tcp_client = None
 
         try:
             # Config
@@ -429,29 +431,29 @@ class TestTcpServerLifeTime(unittest.TestCase):
             server_config.socket_min_checkinterval_ms = 0
 
             # Start
-            self._start_all(server_config)
+            self.tcp_server, self.tcp_client = self._start_all(server_config)
 
             # Client is connected
             self._waitforserver_disconnection((self.tcp_server.get_effective_controlinterval_ms() * 2) + 2000)
 
             # Check client
-            self.assertTrue(self.tcpClient.current_socket is None)
-            self.assertFalse(self.tcpClient.is_connected)
+            self.assertTrue(self.tcp_client.current_socket is None)
+            self.assertFalse(self.tcp_client.is_connected)
 
             # Reset client
-            self.tcpClient = None
+            self.tcp_client = None
 
             # Stop server
             self.tcp_server.stop_server()
 
             # Reset
             self.tcp_server = None
-            self.tcpClient = None
+            self.tcp_client = None
         finally:
             if self.tcp_server:
                 self.tcp_server.stop_server()
-            if self.tcpClient:
-                self.tcpClient.disconnect()
+            if self.tcp_client:
+                self.tcp_client.disconnect()
 
     def test_relative_timeout_priortoabsolute(self):
         """
@@ -461,7 +463,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
 
         # Instances
         self.tcp_server = None
-        self.tcpClient = None
+        self.tcp_client = None
 
         try:
             # Config
@@ -473,29 +475,29 @@ class TestTcpServerLifeTime(unittest.TestCase):
             server_config.socket_min_checkinterval_ms = 0
 
             # Start
-            self._start_all(server_config)
+            self.tcp_server, self.tcp_client = self._start_all(server_config)
 
             # Client is connected
             self._waitforserver_disconnection((self.tcp_server.get_effective_controlinterval_ms() * 2) + 2000)
 
             # Check client
-            self.assertTrue(self.tcpClient.current_socket is None)
-            self.assertFalse(self.tcpClient.is_connected)
+            self.assertTrue(self.tcp_client.current_socket is None)
+            self.assertFalse(self.tcp_client.is_connected)
 
             # Reset client
-            self.tcpClient = None
+            self.tcp_client = None
 
             # Stop server
             self.tcp_server.stop_server()
 
             # Reset
             self.tcp_server = None
-            self.tcpClient = None
+            self.tcp_client = None
         finally:
             if self.tcp_server:
                 self.tcp_server.stop_server()
-            if self.tcpClient:
-                self.tcpClient.disconnect()
+            if self.tcp_client:
+                self.tcp_client.disconnect()
 
     def test_do_not_close(self):
         """
@@ -505,7 +507,7 @@ class TestTcpServerLifeTime(unittest.TestCase):
 
         # Instances
         self.tcp_server = None
-        self.tcpClient = None
+        self.tcp_client = None
 
         try:
             # Config
@@ -517,33 +519,33 @@ class TestTcpServerLifeTime(unittest.TestCase):
             server_config.socket_min_checkinterval_ms = 0
 
             # Start
-            self._start_all(server_config)
+            self.tcp_server, self.tcp_client = self._start_all(server_config)
 
             # Wait a bit
             SolBase.sleep(5000)
 
             # Check client
-            self.assertIsNotNone(self.tcpClient.current_socket)
-            self.assertTrue(self.tcpClient.is_connected)
+            self.assertIsNotNone(self.tcp_client.current_socket)
+            self.assertTrue(self.tcp_client.is_connected)
 
             # Disconnect
-            self.tcpClient.disconnect()
+            self.tcp_client.disconnect()
 
             # Check client
-            self.assertTrue(self.tcpClient.current_socket is None)
-            self.assertFalse(self.tcpClient.is_connected)
+            self.assertTrue(self.tcp_client.current_socket is None)
+            self.assertFalse(self.tcp_client.is_connected)
 
             # Reset client
-            self.tcpClient = None
+            self.tcp_client = None
 
             # Stop server
             self.tcp_server.stop_server()
 
             # Reset
             self.tcp_server = None
-            self.tcpClient = None
+            self.tcp_client = None
         finally:
             if self.tcp_server:
                 self.tcp_server.stop_server()
-            if self.tcpClient:
-                self.tcpClient.disconnect()
+            if self.tcp_client:
+                self.tcp_client.disconnect()

@@ -119,6 +119,8 @@ class TestTcpPing(unittest.TestCase):
 
         :param deadlock: If true, use a server context that deadlock on stop
         :type deadlock: bool
+        :return pysoltcp.tcpserver.TcpServer.TcpServer
+        :rtype pysoltcp.tcpserver.TcpServer.TcpServer
         """
         # Config
         server_config = TcpServerConfig()
@@ -154,6 +156,8 @@ class TestTcpPing(unittest.TestCase):
         self.assertTrue(self.tcp_server.start_server())
         self.assertTrue(self.tcp_server._is_started)
         self.assertFalse(self.tcp_server._server is None)
+
+        return self.tcp_server
 
     def _stop_server_and_check(self):
         """
@@ -479,7 +483,7 @@ class TestTcpPing(unittest.TestCase):
 
         try:
             # Start server
-            self._start_server_and_check()
+            self.tcp_server = self._start_server_and_check()
 
             # Force not call
             self.tcp_server._tcp_server_config.onstop_call_client_stopsynch = False
@@ -511,7 +515,7 @@ class TestTcpPing(unittest.TestCase):
 
         try:
             # Start server
-            self._start_server_and_check()
+            self.tcp_server = self._start_server_and_check()
 
             # Force not call
             self.tcp_server._tcp_server_config.onstop_call_client_stopsynch = True

@@ -1437,7 +1437,7 @@ class TestTcpServer(unittest.TestCase):
     # proxy
     # ====================================
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     def test_tcp_svrstart_cliconnect_clistop_proxy(self):
         """
         Test.
@@ -1449,7 +1449,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertFalse(self.test_ssl)
         self.assertTrue(self.test_proxy)
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     def test_tcp_svrstart_cliconnect_svrstop_proxy(self):
         """
         Test.
@@ -1461,7 +1461,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertFalse(self.test_ssl)
         self.assertTrue(self.test_proxy)
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     def test_tcp_svrstart_clisend_svrreply_loopsendrecv_x2_svrstop_proxy(self):
         """
         Test.
@@ -1473,7 +1473,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertFalse(self.test_ssl)
         self.assertTrue(self.test_proxy)
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     def test_tcp_svrstart_clisend_svrreply_loopsendthenrecv_svrstop_proxy(self):
         """
         Test.
@@ -1485,7 +1485,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertFalse(self.test_ssl)
         self.assertTrue(self.test_proxy)
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     def test_tcp_svrstart_clisend_svrreply_svrstop_proxy(self):
         """
         Test.
@@ -1501,7 +1501,7 @@ class TestTcpServer(unittest.TestCase):
     # proxy + ssl
     # ====================================
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_cliconnect_clistop_ssl_proxy(self):
         """
@@ -1514,7 +1514,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_ssl)
         self.assertTrue(self.test_proxy)
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_cliconnect_svrstop_ssl_proxy(self):
         """
@@ -1527,7 +1527,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_ssl)
         self.assertTrue(self.test_proxy)
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_clisend_svrreply_loopsendrecv_x2_svrstop_ssl_proxy(self):
         """
@@ -1540,7 +1540,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_ssl)
         self.assertTrue(self.test_proxy)
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_clisend_svrreply_loopsendthenrecv_svrstop_ssl_proxy(self):
         """
@@ -1553,7 +1553,7 @@ class TestTcpServer(unittest.TestCase):
         self.assertTrue(self.test_ssl)
         self.assertTrue(self.test_proxy)
 
-    @unittest.skipIf(is_dante_detected() == False, "Need dante")
+    @unittest.skipIf(not is_dante_detected(), "Need dante")
     @unittest.skipIf(not ENABLE_SSL, "ENABLE_SSL False")
     def test_tcp_svrstart_clisend_svrreply_svrstop_ssl_proxy(self):
         """

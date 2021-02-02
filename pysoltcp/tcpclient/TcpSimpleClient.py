@@ -26,6 +26,7 @@ from _ssl import PROTOCOL_TLSv1
 from threading import Lock
 
 import gevent
+# noinspection PyPackageRequirements
 import socks
 from gevent import GreenletExit
 
@@ -487,7 +488,7 @@ class TcpSimpleClient(TcpSocketManager):
                 self.current_socket.do_handshake()
                 logger.debug("Called do_handshake")
         except Exception as e:
-            logger.warn("Exception while waiting for do_handshake, ex=%s", SolBase.extostr(e))
+            logger.warning("Exception while waiting for do_handshake, ex=%s", SolBase.extostr(e))
             self._callback_disconnect()
         finally:
             SolBase.sleep(0)
