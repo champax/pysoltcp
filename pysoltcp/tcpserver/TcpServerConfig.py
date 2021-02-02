@@ -50,7 +50,7 @@ class TcpServerConfig(object):
         self._listen_addr = None
         self._listen_port = None
         self._client_factory = None
-        self._set_client_factory(TcpServerClientContextFactory())
+        self.client_factory = TcpServerClientContextFactory()
 
         # Ssl
         self._ssl_enable = False

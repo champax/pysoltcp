@@ -195,8 +195,8 @@ class PingServerContext(TcpServerQueuedClientContext):
                 self._pingGreenlet = gevent.spawn_later(self._pingIntervalMs * 0.001, self._protocol_server_ping_send)
             else:
                 # Randomize delay
-                vmin = self._pingIntervalMs / 2
-                vmax = self._pingIntervalMs
+                vmin = int(self._pingIntervalMs / 2)
+                vmax = int(self._pingIntervalMs)
                 ms = randint(vmin, vmax)
                 self._pingGreenlet = gevent.spawn_later(ms * 0.001, self._protocol_server_ping_send)
 
