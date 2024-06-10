@@ -45,7 +45,7 @@ if PY2:
     from gevent._sslgte279 import SSLSocket
 else:
     # noinspection PyProtectedMember
-    from gevent._ssl3 import SSLSocket
+    from gevent.ssl import SSLSocket
 
 
 SolBase.voodoo_init()
