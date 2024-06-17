@@ -30,8 +30,6 @@ import gevent
 import socks
 from gevent import GreenletExit
 
-from pysoltcp import PY2
-
 from gevent.queue import Queue
 from pysolbase.SolBase import SolBase
 from pysolmeters.AtomicInt import AtomicIntSafe
@@ -40,13 +38,7 @@ from pysoltcp.tcpbase.ProtocolParserTextDelimited import ProtocolParserTextDelim
 from pysoltcp.tcpbase.TcpSocketManager import TcpSocketManager
 from pysoltcp.tcpclient.TcpClientConfig import TcpClientConfig
 
-if PY2:
-    # noinspection PyProtectedMember
-    from gevent._sslgte279 import SSLSocket
-else:
-    # noinspection PyProtectedMember
-    from gevent.ssl import SSLSocket
-
+from gevent.ssl import SSLSocket
 
 SolBase.voodoo_init()
 
