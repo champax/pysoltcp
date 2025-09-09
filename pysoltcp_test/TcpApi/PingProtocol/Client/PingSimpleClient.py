@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # ===============================================================================
 #
-# Copyright (C) 2013/2017 Laurent Labatut / Laurent Champagnac
+# Copyright (C) 2013/2025 Laurent Labatut / Laurent Champagnac
 #
 #
 #
@@ -183,8 +183,8 @@ class PingSimpleClient(TcpSimpleClient):
                 self._ping_greenlet = gevent.spawn_later(self._ping_interval_ms * 0.001, self._protocol_client_ping_send)
             else:
                 # Randomize delay
-                vmin = self._ping_interval_ms / 2
-                vmax = self._ping_interval_ms
+                vmin = int(self._ping_interval_ms / 2)
+                vmax = int(self._ping_interval_ms)
                 ms = randint(vmin, vmax)
                 self._ping_greenlet = gevent.spawn_later(ms * 0.001, self._protocol_client_ping_send)
 
