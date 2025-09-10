@@ -32,7 +32,7 @@ p_name = "pysoltcp"
 p_author = "Laurent Champagnac"
 p_email = "champagnac.laurent@gmail.com"
 p_url = "https://github.com/champax/pysoltcp"
-p_version = "3.13.2"
+p_version = "3.13.3"
 
 # Load
 setup(
